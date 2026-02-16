@@ -9,20 +9,26 @@ gsap.registerPlugin(ScrollTrigger);
 
 const updateNavbarColor = () => {
     const scrollPos = window.scrollY + navbar.offsetHeight / 2;
-    
+
     // Check which section we are currently in
     const headerRect = header.getBoundingClientRect();
     const contentRect = contentSection.getBoundingClientRect();
+    const doubleMarquee = document.querySelector('.Double-marquee');
+    const doubleMarqueeRect = doubleMarquee ? doubleMarquee.getBoundingClientRect() : null;
     const footerRect = footer.getBoundingClientRect();
 
     // Adjust for absolute scroll position
     const headerTop = headerRect.top + window.scrollY;
     const contentTop = contentRect.top + window.scrollY;
+    const doubleMarqueeTop = doubleMarqueeRect ? doubleMarqueeRect.top + window.scrollY : Infinity;
     const footerTop = footerRect.top + window.scrollY;
 
     if (scrollPos >= footerTop) {
         navbar.classList.add('on-dark');
         navbar.classList.remove('on-light');
+    } else if (scrollPos >= doubleMarqueeTop) {
+        navbar.classList.add('on-light');
+        navbar.classList.remove('on-dark');
     } else if (scrollPos >= contentTop) {
         navbar.classList.add('on-light');
         navbar.classList.remove('on-dark');
