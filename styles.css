@@ -505,10 +505,10 @@ body::-webkit-scrollbar {
     flex: 0 0 auto;
     display: flex;
     gap: 15px;
-    height: 400px;
+    height: 500px;
     position: relative;
     overflow: hidden;
-    width: 380px;
+    width: 500px;
 }
 
 .marquee-column {
@@ -575,8 +575,8 @@ body::-webkit-scrollbar {
 }
 
 .marquee-item {
-    width: 100%;
-    height: 156px;
+    width: 90%;
+    height: 240px;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -618,6 +618,39 @@ body::-webkit-scrollbar {
 
 .marquee-item[data-logo-theme="d"] {
     background-color: #29725f;
+}
+
+/* Brand specific themes */
+.marquee-item[data-brand="hema"] {
+    background-color: var(--color-maroon);
+}
+
+.marquee-item[data-brand="netflix"] {
+    background-color: var(--color-darkblue);
+}
+
+.marquee-item[data-brand="ace-tate"] {
+    background-color: var(--color-orange);
+}
+
+.marquee-item[data-brand="getir"] {
+    background-color: var(--color-green);
+}
+
+.marquee-item[data-brand="oxxio"] {
+    background-color: var(--color-pink);
+}
+
+.marquee-item[data-brand="kfc"] {
+    background-color: var(--color-lightgreen);
+}
+
+.marquee-item[data-brand="anwb"] {
+    background-color: var(--color-lightblue);
+}
+
+.marquee-item[data-brand="swapfiets"] {
+    background-color: var(--color-maroon);
 }
 
 .marquee-logo {
