@@ -228,6 +228,9 @@ wiggleElements.forEach(element => {
     const intensity = parseFloat(element.getAttribute('data-wiggle')) || 5;
     const target = element.querySelector('[data-wiggle-target]') || element;
 
+    // Set origin to center for proper wiggle
+    gsap.set(target, { transformOrigin: "center center" });
+
     let wiggleTween;
 
     element.addEventListener('mouseenter', () => {
