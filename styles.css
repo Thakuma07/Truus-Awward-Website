@@ -333,56 +333,82 @@ body::-webkit-scrollbar {
     color: currentColor;
 }
 
-/* Stickers */
+/* Stickers - Configuration Variables */
+:root {
+    /* Card Sticker Sizes */
+    --sticker-camera-w: 160px;
+    --sticker-phone-w: 120px;
+    --sticker-smiley-w: 120px;
+    --sticker-hand-w: 120px;
+    --sticker-heart-w: 140px;
+
+    /* Card Sticker Positions */
+    --sticker-camera-top: -45px;
+    --sticker-camera-left: 120px;
+
+    --sticker-phone-top: -45px;
+    --sticker-phone-left: 155px;
+
+    --sticker-smiley-top: -180px;
+
+    --sticker-hand-top: -40px;
+
+    --sticker-heart-top: -250px;
+    --sticker-heart-right: 15px;
+}
+
 .card-sticker {
     position: absolute;
     z-index: 10;
+    pointer-events: none;
+    /* Allows clicking card through sticker */
 }
 
-/* Sticker Positions - Refined */
-.sticker-camera {
-    width: 140px;
-    height: 90px;
-    top: -35px;
-    right: -2rem;
-    transform: translateX(-50%) rotate(5deg);
-    border-radius: 12px;
+.card-sticker svg {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
-.sticker-phone {
-    width: 120px;
-    height: 120px;
-    top: -65px;
-    right: 2rem;
-    transform: rotate(10deg);
+/* Sticker Positions - Applied via variables for easy manual changes */
+.card-sticker.sticker-camera {
+    width: var(--sticker-camera-w);
+    height: auto;
+    top: var(--sticker-camera-top);
+    left: var(--sticker-camera-left);
+    transform: rotate(3deg);
 }
 
-.sticker-smiley {
-    width: 110px;
-    height: 90px;
-    top: -45px;
-    right: -1rem;
-    transform: translateX(-50%) rotate(20deg);
-    border-radius: 50%;
+.card-sticker.sticker-phone {
+    width: var(--sticker-phone-w);
+    height: auto;
+    top: var(--sticker-phone-top);
+    left: var(--sticker-phone-left);
+    transform: rotate(1deg);
 }
 
-.sticker-hand {
-    width: 130px;
-    height: 90px;
-    top: -50px;
-    left: 8rem;
-    transform: rotate(-10deg);
-    border-radius: 15px;
+.card-sticker.sticker-smiley {
+    width: var(--sticker-smiley-w);
+    height: auto;
+    top: var(--sticker-smiley-top);
+    left: 70%;
+    transform: translateX(-50%) rotate(4deg);
 }
 
-.sticker-heart {
-    width: 120px;
-    height: 80px;
-    top: -2rem;
-    right: 2rem;
-    left: auto;
-    transform: rotate(15deg);
-    border-radius: 50%;
+.card-sticker.sticker-hand {
+    width: var(--sticker-hand-w);
+    height: auto;
+    top: var(--sticker-hand-top);
+    left: 70%;
+    transform: translateX(-50%) rotate(8deg);
+}
+
+.card-sticker.sticker-heart {
+    width: var(--sticker-heart-w);
+    height: auto;
+    top: var(--sticker-heart-top);
+    right: var(--sticker-heart-right);
+    transform: rotate(1deg);
 }
 
 
@@ -790,21 +816,21 @@ body::-webkit-scrollbar {
     transform: rotate(-15deg);
 }
 
-.sticker-hands {
+.footer-sticker.sticker-hands {
     left: 55%;
     bottom: 0%;
     width: 130px;
     transform: rotate(10deg);
 }
 
-.sticker-100 {
+.footer-sticker.sticker-100 {
     left: 75%;
     bottom: 25%;
     width: 110px;
     transform: rotate(15deg);
 }
 
-.sticker-camera {
+.footer-sticker.sticker-camera {
     right: 5%;
     bottom: 15%;
     width: 120px;
