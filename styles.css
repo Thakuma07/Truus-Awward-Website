@@ -390,11 +390,11 @@ body::-webkit-scrollbar {
 /* Double Marquee Section */
 .Double-marquee {
     background-color: var(--bg-color);
-    padding: 120px 80px;
+    padding: 40px 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 120px;
+    gap: 60px;
     min-height: 100vh;
 }
 
@@ -415,13 +415,13 @@ body::-webkit-scrollbar {
 
 .marquee-left h2 {
     font-family: 'Epilogue', sans-serif;
-    font-size: 4rem;
+    font-size: 5.5rem;
     font-weight: 800;
     line-height: 0.95;
     letter-spacing: -2px;
     color: #000;
-    margin-bottom: 115px;
-    margin-right: 45px;
+    margin-bottom: 60px;
+    margin-right: 0;
 }
 
 .text-with {
@@ -504,11 +504,11 @@ body::-webkit-scrollbar {
 .marquee-right {
     flex: 0 0 auto;
     display: flex;
-    gap: 15px;
-    height: 500px;
+    gap: 5px;
+    height: 850px;
     position: relative;
     overflow: hidden;
-    width: 500px;
+    width: 700px;
 }
 
 .marquee-column {
@@ -541,17 +541,17 @@ body::-webkit-scrollbar {
 .marquee-track {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
 }
 
 .marquee-column:nth-child(1) .marquee-track {
-    animation: marqueeUp 20s linear infinite;
+    animation: marqueeUp 12s linear infinite;
 }
 
 .marquee-column:nth-child(2) .marquee-track {
-    animation: marqueeDown 20s linear infinite;
+    animation: marqueeDown 12s linear infinite;
 }
 
 @keyframes marqueeUp {
@@ -577,16 +577,10 @@ body::-webkit-scrollbar {
 .marquee-item {
     width: 90%;
     height: 240px;
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Epilogue', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #fff;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Footer */
@@ -622,11 +616,11 @@ body::-webkit-scrollbar {
 
 /* Brand specific themes */
 .marquee-item[data-brand="hema"] {
-    background-color: var(--color-maroon);
+    background-color: var(--color-darkblue);
 }
 
 .marquee-item[data-brand="netflix"] {
-    background-color: var(--color-darkblue);
+    background-color: var(--color-orange);
 }
 
 .marquee-item[data-brand="ace-tate"] {
@@ -634,15 +628,15 @@ body::-webkit-scrollbar {
 }
 
 .marquee-item[data-brand="getir"] {
-    background-color: var(--color-green);
+    background-color: var(--color-lightgreen);
 }
 
 .marquee-item[data-brand="oxxio"] {
-    background-color: var(--color-pink);
+    background-color: var(--color-lightblue);
 }
 
 .marquee-item[data-brand="kfc"] {
-    background-color: var(--color-lightgreen);
+    background-color: var(--color-pink);
 }
 
 .marquee-item[data-brand="anwb"] {
@@ -655,8 +649,8 @@ body::-webkit-scrollbar {
 
 .marquee-logo {
     position: relative;
-    width: 60%;
-    height: 60%;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -675,7 +669,6 @@ body::-webkit-scrollbar {
     width: 100%;
     height: auto;
     object-fit: contain;
-    filter: brightness(0) invert(1);
     /* Assume logos should be white on colored background */
 }
 
