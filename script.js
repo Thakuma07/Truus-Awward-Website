@@ -252,3 +252,14 @@ wiggleElements.forEach(element => {
         }
     });
 });
+
+// Dynamic Tab Title Change
+const originalTitle = document.title;
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        document.title = "Hey, over here!👋 - Truus";
+    } else {
+        document.title = originalTitle;
+    }
+});
+
