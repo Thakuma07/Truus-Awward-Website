@@ -623,6 +623,7 @@ body::-webkit-scrollbar {
     background: #fff;
     color: #000;
     border-radius: 20px;
+    border-bottom-left-radius: 1px;
     font-size: 0.85rem;
     font-weight: 800;
     width: fit-content;
