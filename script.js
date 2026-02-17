@@ -68,8 +68,8 @@ const originalData = [
 
 cards.forEach((card, index) => {
     card.addEventListener("mouseenter", () => {
-        const overlap = 60;
-        const hoverGap = 80;
+        const overlap = 100;
+        const hoverGap = 150;
 
         cards.forEach((otherCard, otherIndex) => {
             const diff = otherIndex - index;
@@ -81,10 +81,9 @@ cards.forEach((card, index) => {
                     y: 0,
                     rotation: 0,
                     scale: 1.08,
-                    duration: 0.6,
-                    ease: "elastic.out(1, 0.7)",
-                    overwrite: true,
-                    zIndex: 20
+                    duration: 0.8,
+                    ease: "elastic.out(1, 0.5)",
+                    overwrite: true
                 });
             } else {
                 let targetX;
@@ -99,10 +98,9 @@ cards.forEach((card, index) => {
                     y: diff * 15,
                     rotation: originalData[otherIndex].rotation * 0.5,
                     scale: 0.95,
-                    duration: 0.7,
-                    ease: "elastic.out(1, 0.75)",
-                    overwrite: true,
-                    zIndex: 10 - stackIndex
+                    duration: 0.8,
+                    ease: "elastic.out(1, 0.5)",
+                    overwrite: true
                 });
             }
         });
@@ -115,8 +113,8 @@ cards.forEach((card, index) => {
                 y: 0,
                 scale: 1,
                 rotation: originalData[i].rotation,
-                duration: 0.6,
-                ease: "elastic.out(1, 0.7)",
+                duration: 0.8,
+                ease: "elastic.out(1, 0.5)",
                 overwrite: true,
                 zIndex: i + 1
             });
