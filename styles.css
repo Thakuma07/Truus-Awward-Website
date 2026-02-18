@@ -39,6 +39,12 @@ body {
     cursor: url(https://cdn.prod.website-files.com/683703490bc01e1b8c052e06/68384fb10e12e8d4c16e38e5_cursor-default.svg) 2 0, auto;
 }
 
+html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
 body::-webkit-scrollbar {
     display: none;
     /* Hide scrollbar for Chrome, Safari and Opera */
@@ -189,7 +195,7 @@ body::-webkit-scrollbar {
     width: 100%;
     max-width: 1400px;
     height: 650px;
-    margin: 100px auto 100px 50px;
+    margin: 100px auto 100px 100px;
     display: flex;
     justify-content: center;
     /* Ensure no scrollbar appears from this section */
@@ -206,7 +212,7 @@ body::-webkit-scrollbar {
     position: absolute;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: stretch;
     gap: 1.5rem;
     padding: 3.5rem 1.5rem 1.5rem;
@@ -257,12 +263,11 @@ body::-webkit-scrollbar {
     /* MOVED LEFT */
     top: 100px;
     /* ROTATION: Change the degree value below to rotate this card */
-    transform: rotate(-10deg);
+    transform: rotate(-5deg);
     z-index: 2;
 }
 
 .card-orange {
-    height: 60%;
     background-color: var(--color-orange);
     color: #1a1a1a;
     left: calc(50% - 220px);
@@ -274,7 +279,6 @@ body::-webkit-scrollbar {
 }
 
 .card-maroon {
-    height: 65%;
     background-color: var(--color-maroon);
     left: calc(50% + 50px);
     /* MOVED LEFT */
@@ -285,7 +289,6 @@ body::-webkit-scrollbar {
 }
 
 .card-pink {
-    height: 60%;
     background-color: var(--color-pink);
     color: #1a1a1a;
     left: calc(50% + 320px);
@@ -294,6 +297,19 @@ body::-webkit-scrollbar {
     /* ROTATION: Change the degree value below to rotate this card */
     transform: rotate(5deg);
     z-index: 5;
+}
+
+/* Expand hit area for middle cards to bridge gaps */
+.card-darkblue::after,
+.card-orange::after,
+.card-maroon::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -35px;
+    right: -35px;
+    /* Invisible but captures mouse events */
 }
 
 

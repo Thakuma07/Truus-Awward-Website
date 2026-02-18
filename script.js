@@ -60,65 +60,120 @@ const cards = gsap.utils.toArray(".card");
 // Original rotations from CSS
 const originalData = [
     { rotation: 4 },
-    { rotation: -10 },
+    { rotation: -5 },
     { rotation: 5 },
     { rotation: -8 },
     { rotation: 5 }
 ];
 
+let leaveTimeout = null;
+
 cards.forEach((card, index) => {
     card.addEventListener("mouseenter", () => {
-        const overlap = 100;
-        const hoverGap = 150;
+        // Cancel any pending reset from leaving a previous card
+        if (leaveTimeout) {
+            clearTimeout(leaveTimeout);
+            leaveTimeout = null;
+        }
+
+        const hoverGap = 120;   // gap between hovered card and nearest neighbor
+        const clusterGap = 150;  // small gap between clustered non-hovered cards
+        const cardWidth = 320;
+
+        const hoveredLeft = cards[index].offsetLeft;
+
+        // Separate into left and right groups
+        const leftCards = [];
+        const rightCards = [];
 
         cards.forEach((otherCard, otherIndex) => {
-            const diff = otherIndex - index;
-            const stackIndex = Math.abs(diff) - 1;
-
-            if (otherIndex === index) {
-                gsap.to(otherCard, {
-                    x: 0,
-                    y: 0,
-                    rotation: 0,
-                    scale: 1.08,
-                    duration: 0.8,
-                    ease: "elastic.out(1, 0.5)",
-                    overwrite: true
-                });
-            } else {
-                let targetX;
-                if (otherIndex < index) {
-                    targetX = -hoverGap - (stackIndex * overlap);
-                } else {
-                    targetX = hoverGap + (stackIndex * overlap);
-                }
-
-                gsap.to(otherCard, {
-                    x: targetX,
-                    y: diff * 15,
-                    rotation: originalData[otherIndex].rotation * 0.5,
-                    scale: 0.95,
-                    duration: 0.8,
-                    ease: "elastic.out(1, 0.5)",
-                    overwrite: true
-                });
-            }
+            if (otherIndex < index) leftCards.push({ card: otherCard, index: otherIndex });
+            else if (otherIndex > index) rightCards.push({ card: otherCard, index: otherIndex });
         });
+
+        // Hovered card moves to common vertical axis (50px from top)
+        const currentTop = cards[index].offsetTop;
+        const targetCommonTop = 50;
+        const moveY = targetCommonTop - currentTop;
+
+        gsap.to(cards[index], {
+            x: 0,
+            y: moveY,
+            rotation: 0,
+            scale: 1.08,
+            duration: 0.9,
+            ease: "elastic.out(1, 0.5)",
+            overwrite: true
+        });
+
+        // Right cluster: nearest card always at hoverGap distance
+        if (rightCards.length) {
+            const clusterStart = hoveredLeft + cardWidth + hoverGap;
+
+            rightCards.forEach((item, i) => {
+                const targetAbsLeft = clusterStart + (i * clusterGap);
+                // Ensure card always moves right, never toward hovered card
+                const targetX = Math.max(targetAbsLeft - item.card.offsetLeft, 10);
+
+                // Calculate vertical offset to move along the card's rotation axis
+                const angleRad = originalData[item.index].rotation * (Math.PI / 180);
+                const targetY = targetX * Math.tan(angleRad);
+
+                gsap.to(item.card, {
+                    x: targetX,
+                    y: targetY,
+                    rotation: originalData[item.index].rotation,
+                    scale: 1, // original size, no shrinking
+                    duration: 1.0,
+                    ease: "elastic.out(1, 0.5)",
+                    overwrite: true
+                });
+            });
+        }
+
+        // Left cluster: nearest card always at hoverGap distance
+        if (leftCards.length) {
+            leftCards.reverse(); // nearest card first
+            const clusterStart = hoveredLeft - hoverGap - cardWidth;
+
+            leftCards.forEach((item, i) => {
+                const targetAbsLeft = clusterStart - (i * clusterGap);
+                // Ensure card always moves left, never toward hovered card
+                const targetX = Math.min(targetAbsLeft - item.card.offsetLeft, -10);
+
+                // Calculate vertical offset to move along the card's rotation axis
+                const angleRad = originalData[item.index].rotation * (Math.PI / 180);
+                const targetY = targetX * Math.tan(angleRad);
+
+                gsap.to(item.card, {
+                    x: targetX,
+                    y: targetY,
+                    rotation: originalData[item.index].rotation,
+                    scale: 1, // original size, no shrinking,
+                    duration: 1.0,
+                    ease: "elastic.out(1, 0.5)",
+                    overwrite: true
+                });
+            });
+        }
     });
 
     card.addEventListener("mouseleave", () => {
-        cards.forEach((c, i) => {
-            gsap.to(c, {
-                x: 0,
-                y: 0,
-                scale: 1,
-                rotation: originalData[i].rotation,
-                duration: 0.8,
-                ease: "elastic.out(1, 0.5)",
-                overwrite: true,
-                zIndex: i + 1
+        // Delay the reset so moving between cards feels seamless
+        leaveTimeout = setTimeout(() => {
+            cards.forEach((c, i) => {
+                gsap.to(c, {
+                    x: 0,
+                    y: 0,
+                    scale: 1,
+                    rotation: originalData[i].rotation,
+                    duration: 1.0,
+                    ease: "elastic.out(1, 0.5)",
+                    overwrite: true,
+                    zIndex: i + 1
+                });
             });
-        });
+        }, 80);
     });
 });
 
