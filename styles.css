@@ -627,13 +627,13 @@ body::-webkit-scrollbar {
 
 /* Footer */
 .main-footer {
-    padding: 20px;
+    padding: 10px;
     background-color: var(--bg-color);
 }
 
 .footer-inner {
     background-color: var(--color-darkblue);
-    border-radius: 40px;
+    border-radius: 20px;
     padding: 80px 40px 40px;
     position: relative;
     overflow: hidden;
@@ -661,18 +661,21 @@ body::-webkit-scrollbar {
 
 .footer-badge {
     display: inline-block;
-    padding: 6px 15px;
+    font-family: "Epilogue", Arial, sans-serif;
+    padding: 8px 15px;
     background: #fff;
     color: #000;
+    align-items: center;
     border-radius: 20px;
     border-bottom-left-radius: 1px;
     font-size: 0.85rem;
-    font-weight: 800;
+    font-weight: 550;
     width: fit-content;
     text-transform: lowercase;
 }
 
 .footer-column h3 {
+    font-family: "Epilogue", Arial, sans-serif;
     font-size: 2rem;
     font-weight: 800;
     line-height: 1.1;
@@ -680,16 +683,17 @@ body::-webkit-scrollbar {
 }
 
 .footer-column address {
+    font-family: "Epilogue", Arial, sans-serif;
     font-style: normal;
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 1000;
     line-height: 1.2;
 }
 
 .footer-map-link {
     color: white;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 400;
     width: fit-content;
     padding-bottom: 4px;
     margin-top: 10px;
@@ -699,9 +703,9 @@ body::-webkit-scrollbar {
 }
 
 .draw-btn__svg {
-    width: 100%;
+    width: 40%;
     height: auto;
-    margin-top: -2px;
+    margin-top: 2px;
 }
 
 .footer-email {
@@ -717,6 +721,7 @@ body::-webkit-scrollbar {
 .footer-whatsapp {
     font-size: 1.5rem;
     font-weight: 800;
+    margin-top: -10px;
     color: white;
     text-decoration: none;
     width: fit-content;
@@ -726,20 +731,19 @@ body::-webkit-scrollbar {
 .footer-note {
     font-size: 0.75rem;
     opacity: 0.8;
-    max-width: 200px;
     line-height: 1.4;
 }
 
 .footer-socials {
     display: flex;
-    gap: 15px;
-    margin-top: 15px;
+    gap: 20px;
+    margin-top: 1px;
 }
 
 .footer-socials a {
     color: white;
-    width: 32px;
-    height: 32px;
+    width: 120;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -762,9 +766,9 @@ body::-webkit-scrollbar {
 }
 
 .footer-logo__svg {
-    width: 110%;
+    width: 104.9%;
     height: auto;
-    margin-left: -5%;
+    margin-left: -2.5%;
     /* Center overshoot */
 }
 
@@ -786,13 +790,18 @@ body::-webkit-scrollbar {
 
 .footer-credits {
     background: #000;
-    color: white;
-    padding: 2px 10px;
+    font-family: "Epilogue";
+    color: rgb(206, 206, 206);
+    margin-right: -25px;
+    margin-bottom: -25px;
+    padding: 6px 11px;
     border-radius: 20px;
+    border-bottom-left-radius: 1px;
     text-decoration: none;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     pointer-events: auto;
-    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-weight: 400;
 }
 
 .footer-stickers {
@@ -812,23 +821,23 @@ body::-webkit-scrollbar {
 }
 
 .sticker-boom {
-    left: 2%;
+    left: -1%;
     bottom: 15%;
-    width: 120px;
+    width: 150px;
     transform: rotate(-10deg);
 }
 
 .sticker-smiley {
     left: 20%;
     bottom: 45%;
-    width: 90px;
-    transform: rotate(5deg);
+    width: 130px;
+    transform: rotate(-20deg);
 }
 
 .sticker-heart {
     left: 45%;
     bottom: 30%;
-    width: 100px;
+    width: 130px;
     transform: rotate(-15deg);
 }
 
@@ -840,17 +849,17 @@ body::-webkit-scrollbar {
 }
 
 .footer-sticker.sticker-100 {
-    left: 75%;
-    bottom: 25%;
-    width: 110px;
-    transform: rotate(15deg);
+    left: 60%;
+    bottom: 55%;
+    width: 130px;
+    transform: rotate(-0deg);
 }
 
 .footer-sticker.sticker-camera {
-    right: 5%;
+    right: 8%;
     bottom: 15%;
-    width: 120px;
-    transform: rotate(-10deg);
+    width: 130px;
+    transform: rotate(5deg);
 }
 
 @media (max-width: 900px) {
