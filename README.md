@@ -2,7 +2,9 @@
 
 A highly interactive, visually stunning recreation of the **Truus.co** website, built with modern frontend technologies and focused on premium user experience and animations. This project was developed using **Antigravity AI** to demonstrate elite-level web development practices.
 
-![Website Preview Placeholder](https://via.placeholder.com/1200x600/1a1a1a/f0ebe6?text=Truus+Website+Preview)
+<img width="1920" height="1080" alt="Screenshot 2026-02-20 110602" src="https://github.com/user-attachments/assets/cb80f406-998e-4853-9ea5-7dec87952117" />
+<img width="1920" height="1080" alt="Screenshot 2026-02-20 110610" src="https://github.com/user-attachments/assets/9ca5af12-5e0b-4b81-954c-1dcb484c671a" />
+
 
 ## 🚀 Overview
 
