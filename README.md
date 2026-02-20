@@ -15,11 +15,15 @@ This project is a high-fidelity clone of the Truus advertising agency website. I
 -   **Dual-Direction Randomized Marquees**: An infinite scrolling logo section with randomized brand placement and background colors for a fresh experience on every visit.
 -   **Scroll-Triggered SVG Animations**: Hand-drawn style underlines and path animations that reveal themselves as the user explores the page.
 -   **High-End Typography**: Integration of premium variable fonts (*Epilogue* and *DM Sans*) for a brutalist yet polished look.
--   **Interactive Micro-details**: 
+-   **Interactive Micro-details**:
     -   Visibility-triggered tab titles ("Hey, over here!👋") to re-engage users.
     -   Haptic-style wiggling social icons.
     -   Custom cursor implementation.
--   **Responsive & Semantic**: built with clean HTML5 and modern CSS3 (Flexbox/Grid/Variables) for a solid foundation.
+-   **Optimized SVG System**: A three-tier SVG strategy for maximum performance:
+    -   Fixed-color decorative SVGs extracted to external `.svg` files (loaded via `<img>`).
+    -   Repeated icons (`bullet-icon`, `card-divider`) defined once as SVG `<symbol>` + `<use>` references.
+    -   CSS-themed / animated SVGs kept inline for `currentColor` and draw-animation support.
+-   **Responsive & Semantic**: Built with clean HTML5 and modern CSS3 (Flexbox/Grid/Variables) for a solid foundation.
 
 ## 🛠️ Built With
 
@@ -31,12 +35,39 @@ This project is a high-fidelity clone of the Truus advertising agency website. I
 ## 📦 Project Structure
 
 ```text
-├── fonts/          # Custom web fonts (Epilogue, DM Sans)
-├── index.html      # Main page structure with inline SVGs
-├── script.js       # GSAP timelines and interactive logic
-├── styles.css      # Core styles and design system tokens
-└── README.md       # Project documentation
+├── assets/                        # All external SVG assets
+│   ├── sticker-camera.svg         # Card sticker — brand card
+│   ├── sticker-phone.svg          # Card sticker — social card
+│   ├── sticker-smiley.svg         # Card sticker — activations card
+│   ├── sticker-hand.svg           # Card sticker — video production card
+│   ├── sticker-heart.svg          # Card sticker — with partners card
+│   ├── nav-work-blob.svg          # Orange blob behind navbar "work" text
+│   ├── marquee-blob.svg           # Blob background in marquee section
+│   ├── marquee-hand.svg           # Decorative hand in marquee section
+│   ├── footer-sticker-smiley.svg  # Footer decorative sticker
+│   ├── footer-sticker-heart.svg   # Footer decorative sticker
+│   ├── footer-sticker-hands.svg   # Footer decorative sticker
+│   ├── footer-sticker-100.svg     # Footer decorative sticker
+│   ├── footer-sticker-camera.svg  # Footer decorative sticker
+│   └── footer-sticker-boom.svg    # Footer decorative sticker
+├── fonts/                         # Custom web fonts (Epilogue, DM Sans)
+├── index.html                     # Main page structure
+├── script.js                      # GSAP timelines and interactive logic
+├── styles.css                     # Core styles and design system tokens
+└── README.md                      # Project documentation
 ```
+
+## 🎨 SVG Architecture
+
+All SVGs in this project are handled using one of three strategies, chosen based on their requirements:
+
+| Strategy | Used For | Why |
+|---|---|---|
+| External `.svg` + `<img>` | Decorative stickers, blobs, logos with fixed colors | No CSS dependency; best for large, non-reused shapes |
+| Inline `<symbol>` + `<use>` | Repeated icons (`bullet-icon`, `card-divider`) | Defined once, rendered many times; supports `currentColor` |
+| Inline `<svg>` | Navbar logos, social icons, animated paths | Requires CSS `currentColor` or `stroke-dasharray` draw animations |
+
+This system reduced `index.html` from **246 KB / 646 lines** to **~48 KB / 413 lines** — an **80% file size reduction**.
 
 ## ⚙️ Setup & Installation
 
