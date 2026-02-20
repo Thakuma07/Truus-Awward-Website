@@ -36,7 +36,7 @@ body {
     /* Hide scrollbar for Firefox */
     -ms-overflow-style: none;
     /* Hide scrollbar for IE and Edge */
-    cursor: url(assets/cursor-default.svg) 2 0, auto;
+    cursor: url("assets/Cursor SVG/cursor-default.svg") 2 0, auto;
 }
 
 html {
@@ -163,7 +163,7 @@ body::-webkit-scrollbar {
     font-weight: 800;
     letter-spacing: -4px;
     color: #000;
-    cursor: url(assets/cursor-text.svg) 12 12, auto;
+    cursor: url("assets/Cursor SVG/cursor-text.svg") 12 12, auto;
 }
 
 .italic-text {
@@ -199,7 +199,7 @@ body::-webkit-scrollbar {
     display: flex;
     justify-content: center;
     /* Ensure no scrollbar appears from this section */
-    cursor: url(assets/cursor-text.svg) 12 12, auto;
+    cursor: url("assets/Cursor SVG/cursor-text.svg") 12 12, auto;
 }
 
 /* Base Card Styles */
@@ -223,7 +223,7 @@ body::-webkit-scrollbar {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     transform-origin: center center;
     /* transition removed — GSAP handles all card animations */
-    cursor: url(assets/cursor-text.svg) 12 12, auto;
+    cursor: url("assets/Cursor SVG/cursor-text.svg") 12 12, auto;
 }
 
 .card-title {
@@ -464,7 +464,7 @@ body::-webkit-scrollbar {
     color: #000;
     margin-bottom: 120px;
     margin-right: 50px;
-    cursor: url(assets/cursor-text.svg) 12 12, auto;
+    cursor: url("assets/Cursor SVG/cursor-text.svg") 12 12, auto;
 }
 
 .text-with {
@@ -674,7 +674,7 @@ body::-webkit-scrollbar {
     font-weight: 550;
     width: fit-content;
     text-transform: lowercase;
-    cursor: url(assets/cursor-text.svg) 12 12, auto;
+    cursor: url("assets/Cursor SVG/cursor-text.svg") 12 12, auto;
 }
 
 .footer-column h3 {
@@ -683,7 +683,7 @@ body::-webkit-scrollbar {
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -1px;
-    cursor: url(assets/cursor-pointer.svg) 12 12, pointer;
+    cursor: url("assets/Cursor SVG/cursor-pointer.svg") 12 12, pointer;
 }
 
 .footer-column address {
@@ -692,7 +692,7 @@ body::-webkit-scrollbar {
     font-size: 1.5rem;
     font-weight: 1000;
     line-height: 1.2;
-    cursor: url(assets/cursor-text.svg) 12 12, auto;
+    cursor: url("assets/Cursor SVG/cursor-text.svg") 12 12, auto;
 }
 
 .footer-map-link {
@@ -708,7 +708,7 @@ body::-webkit-scrollbar {
 }
 
 .footer-map-link span {
-    cursor: url(assets/cursor-pointer.svg) 12 12, pointer;
+    cursor: url("assets/Cursor SVG/cursor-pointer.svg") 12 12, pointer;
 }
 
 .draw-btn__svg {
@@ -725,7 +725,7 @@ body::-webkit-scrollbar {
     letter-spacing: -0.5px;
     width: fit-content;
     display: inline-block;
-    cursor: url(assets/cursor-pointer.svg) 12 12, pointer;
+    cursor: url("assets/Cursor SVG/cursor-pointer.svg") 12 12, pointer;
 }
 
 .footer-whatsapp {
@@ -743,7 +743,7 @@ body::-webkit-scrollbar {
     font-size: 0.75rem;
     opacity: 0.8;
     line-height: 1.4;
-    cursor: url(assets/cursor-text.svg) 12 12, auto;
+    cursor: url("assets/Cursor SVG/cursor-text.svg") 12 12, auto;
 }
 
 .footer-socials {
@@ -760,7 +760,7 @@ body::-webkit-scrollbar {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: url(assets/cursor-pointer.svg) 12 12, pointer;
+    cursor: url("assets/Cursor SVG/cursor-pointer.svg") 12 12, pointer;
 }
 
 .footer-bottom {
@@ -816,7 +816,7 @@ body::-webkit-scrollbar {
     pointer-events: auto;
     letter-spacing: 0.5px;
     font-weight: 400;
-    cursor: url(assets/cursor-pointer.svg) 12 12, pointer;
+    cursor: url("assets/Cursor SVG/cursor-pointer.svg") 12 12, pointer;
 }
 
 .footer-stickers {
