@@ -526,7 +526,7 @@ function buildCard({ color, sticker, title, services }) {
     return (
         '<div class="card card-' + color + '">' +
         '<div class="card-sticker sticker-' + sticker + '">' +
-        '<img src="assets/sticker-' + sticker + '.svg" alt="" width="100%" loading="lazy" aria-hidden="true">' +
+        '<img src="assets/Card-Sticker SVG/sticker-' + sticker + '.svg" alt="" width="100%" loading="lazy" aria-hidden="true">' +
         '</div>' +
         '<h3 class="card-title">' + title + '</h3>' +
         '<svg width="100%" height="10" class="card-divider-svg" aria-hidden="true"><use href="#card-divider" /></svg>' +
