@@ -591,11 +591,11 @@ body::-webkit-scrollbar {
 }
 
 .marquee-column:nth-child(1) .marquee-track {
-    animation: marqueeUp 12s linear infinite;
+    animation: marqueeUp 22s linear infinite;
 }
 
 .marquee-column:nth-child(2) .marquee-track {
-    animation: marqueeDown 12s linear infinite;
+    animation: marqueeDown 22s linear infinite;
 }
 
 @keyframes marqueeUp {
