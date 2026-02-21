@@ -2,8 +2,13 @@
 
 A highly interactive, visually stunning recreation of the **Truus.co** website, built with modern frontend technologies and focused on premium user experience and animations. This project was developed using **Antigravity AI** to demonstrate elite-level web development practices.
 
-<img width="1920" height="1080" alt="Screenshot 2026-02-20 110602" src="https://github.com/user-attachments/assets/cb80f406-998e-4853-9ea5-7dec87952117" />
-<img width="1920" height="1080" alt="Screenshot 2026-02-20 110610" src="https://github.com/user-attachments/assets/9ca5af12-5e0b-4b81-954c-1dcb484c671a" />
+<table>
+  <tr>
+    <td><img width="100%" alt="Screenshot 1" src="https://github.com/user-attachments/assets/cb80f406-998e-4853-9ea5-7dec87952117" /></td>
+    <td><img width="100%" alt="Screenshot 2" src="https://github.com/user-attachments/assets/9ca5af12-5e0b-4b81-954c-1dcb484c671a" /></td>
+  </tr>
+</table>
+
 
 
 ## 🚀 Overview
@@ -12,18 +17,23 @@ This project is a high-fidelity clone of the Truus advertising agency website. I
 
 ## ✨ Key Features
 
--   **Dynamic Navigation System**: Context-aware navbar that automatically adapts its color theme (light/dark) based on the current scroll section.
+-   **Dynamic Navigation System**: Context-aware navbar that automatically adapts its colour theme (light/dark) based on the current scroll section.
 -   **JS-Driven DOM**: Service cards, social icons, and marquee logos are all injected at runtime from clean JS data arrays — keeping `index.html` lean and maintainable.
 -   **Elastic Card Interactions**: Custom GSAP-powered hover effects on service cards, featuring horizontal repulsion, elastic scaling, and smooth clustering.
--   **Dual-Direction Randomized Marquees**: An infinite scrolling logo section with randomized brand placement and background colors for a fresh experience on every visit.
--   **Scroll-Triggered SVG Animations**: Hand-drawn style underlines and path animations that reveal themselves as the user explores the page.
--   **High-End Typography**: Integration of premium variable fonts (*Epilogue* and *DM Sans*) for a brutalist yet polished look.
+-   **Smart Randomized Marquee**: Infinite scrolling logo section with advanced randomisation logic:
+    -   No two identical logos appear consecutively (matched by image `src`).
+    -   No two identical background colours appear consecutively.
+    -   Both constraints also hold at the seamless scroll seam (loop wrap-around).
+-   **Scroll-Triggered SVG Animations**: Hand-drawn style underlines and path animations that reveal as the user explores the page.
+-   **Centralized Wiggle Config**: All hover-wiggle intensities (socials, heading, map link, email, WhatsApp) are controlled from a single `WIGGLE_CONFIG` object in `data.js` — change one number to tune the whole site.
+-   **Footer Sticker — Velocity Push Effect**: Footer stickers react to fast cursor swipes nearby. The sticker is pushed in the direction of the cursor movement, with strength proportional to swipe speed. Has no effect when the cursor is directly on the sticker; auto-springs back when the cursor slows or leaves.
+-   **High-End Typography**: Premium variable fonts (*Epilogue* and *DM Sans*) for a brutalist yet polished look.
 -   **Interactive Micro-details**:
-    -   Visibility-triggered tab titles ("Hey, over here!👋") to re-engage users.
-    -   Haptic-style wiggling social icons with GSAP.
-    -   Custom cursor implementation.
--   **Optimized SVG System**: A three-tier SVG strategy for maximum performance.
--   **Responsive & Semantic**: Built with clean HTML5 and modern CSS3 (Flexbox/Grid/Variables) for a solid foundation.
+    -   Visibility-triggered tab titles ("Hey, over here! 👋") to re-engage users.
+    -   Configurable per-element wiggle animations on hover via `data-wiggle` attributes.
+    -   Custom SVG cursor with context-aware states.
+-   **Self-Hosted SVG Logos**: All 8 brand logos are downloaded locally into `assets/Brand Logos SVG/` — no CDN dependency at runtime.
+-   **Responsive & Semantic**: Built with clean HTML5 and modern CSS3 (Flexbox / Grid / Variables) for a solid foundation.
 
 ## 🛠️ Built With
 
@@ -31,27 +41,29 @@ This project is a high-fidelity clone of the Truus advertising agency website. I
 -   **JavaScript (ES6+)**: Custom logic for DOM manipulation, dynamic rendering, and state management.
 -   **GSAP (GreenSock Animation Platform)**: The core engine for all sophisticated timing and motion.
 -   **ScrollTrigger**: For orchestration of animations linked to the user's scroll progress.
+-   **Lenis**: Ultra-smooth inertia scrolling.
 
 ## 📦 Project Structure
 
 ```text
-├── assets/                        # All external SVG assets
-│   ├── sticker-camera.svg         # Card sticker — brand card
-│   ├── sticker-phone.svg          # Card sticker — social card
-│   ├── sticker-smiley.svg         # Card sticker — activations card
-│   ├── sticker-hand.svg           # Card sticker — video production card
-│   ├── sticker-heart.svg          # Card sticker — with partners card
-│   ├── nav-work-blob.svg          # Orange blob behind navbar "work" text
-│   ├── marquee-blob.svg           # Blob background in marquee section
-│   ├── marquee-hand.svg           # Decorative hand in marquee section
-│   ├── footer-sticker-smiley.svg  # Footer decorative sticker
-│   ├── footer-sticker-heart.svg   # Footer decorative sticker
-│   ├── footer-sticker-hands.svg   # Footer decorative sticker
-│   ├── footer-sticker-100.svg     # Footer decorative sticker
-│   ├── footer-sticker-camera.svg  # Footer decorative sticker
-│   └── footer-sticker-boom.svg    # Footer decorative sticker
+├── assets/
+│   ├── Brand Logos SVG/           # Self-hosted marquee brand logos (8 SVGs)
+│   │   ├── oxxio_logo.svg
+│   │   ├── hema_logo.svg
+│   │   ├── kfc_logo.svg
+│   │   ├── swapfiets_logo.svg
+│   │   ├── anwb_logo.svg
+│   │   ├── netflix_logo.svg
+│   │   ├── ace_tate_logo.svg
+│   │   └── getir_logo.svg
+│   ├── Card-Sticker SVG/          # Stickers on service cards
+│   ├── Cursor SVG/                # Custom cursor states
+│   ├── Footer-Sticker SVG/        # Decorative footer stickers (6 SVGs)
+│   ├── Marquee-blob SVG/          # Blob background + hand in marquee section
+│   └── Navbar SVG/                # Navbar icons and blobs
 ├── fonts/                         # Custom web fonts (Epilogue, DM Sans)
-├── index.html                     # Lean page shell — structure only, no card/icon markup
+├── index.html                     # Lean page shell — structure only
+├── data.js                        # All static data: brands, colors, cards, icons, WIGGLE_CONFIG
 ├── script.js                      # GSAP animations + all dynamic DOM injection
 ├── styles.css                     # Core styles and design system tokens
 └── README.md                      # Project documentation
@@ -63,21 +75,41 @@ All SVGs are handled using one of three strategies:
 
 | Strategy | Used For | Why |
 |---|---|---|
-| External `.svg` + `<img>` | Decorative stickers, blobs, logos with fixed colors | No CSS dependency; best for large, non-reused shapes |
+| External `.svg` + `<img>` | Brand logos, stickers, blobs | No CSS dependency; best for large, non-reused shapes |
 | Inline `<symbol>` + `<use>` | Repeated icons (`bullet-icon`, `card-divider`) | Defined once, rendered many times; supports `currentColor` |
 | Inline `<svg>` | Animated paths (title underline, map link) | Requires `stroke-dasharray` draw animations |
 
-## ⚡ JS-Driven DOM Architecture
+## ⚡ Architecture: `data.js` Separation
 
-To keep `index.html` as a lean structural shell, all repeated or data-driven content is injected by `script.js` at runtime:
+All static data lives in `data.js` (loaded before `script.js`) so configuration is clean and separated from logic:
 
-| Content | Injected by | How |
-|---|---|---|
-| 5 service cards | `injectCards()` | Built from `CARDS_DATA` array via `buildCard()` |
-| LinkedIn, Instagram, TikTok icons | `injectSocialIcons()` | Built from `SOCIAL_ICONS` array |
-| Marquee brand items (both columns) | `populateMarquees()` | Randomised from `brands[]` + `colors[]` arrays |
+| Export | Purpose |
+|---|---|
+| `brands[]` | 8 brand objects `{ name, src }` pointing to local SVG files |
+| `colors[]` | Background colour pool for the marquee |
+| `SOCIAL_ICONS[]` | LinkedIn, Instagram, TikTok link + SVG definitions |
+| `CARDS_DATA[]` | 5 service card definitions with sticker, tags, services |
+| `WIGGLE_CONFIG` | Single source of truth for all hover-wiggle intensities |
 
-This approach reduced `index.html` from **246 KB / 646 lines** to **~24 KB / 219 lines** — a **90% file size reduction**.
+### `WIGGLE_CONFIG` — Tune all wiggle from one place
+
+```js
+const WIGGLE_CONFIG = {
+    socials:    10,  // LinkedIn / Instagram / TikTok icons
+    jobHeading:  1,  // "not hiring right now" heading
+    googleMap:   1,  // Google Maps link text
+    email:       2,  // hello@truus.co
+    whatsapp:    2,  // send us a whatsapp
+};
+```
+Higher number = more rotation (degrees). Set to `0` to disable for any element.
+
+## 🎲 Marquee Randomisation Logic
+
+The marquee uses two constraint-aware helpers in `script.js`:
+
+- **`shuffleNoAdjacentSrc(brands)`** — Fisher-Yates shuffle + post-processing to ensure no two cards with the same logo image appear next to each other, including at the loop seam.
+- **`assignColorsNoAdjacent(count, colors)`** — Assigns background colours one-by-one, always excluding the previous colour (and the first colour on the last item, to fix the seam).
 
 ## ⚙️ Setup & Installation
 
