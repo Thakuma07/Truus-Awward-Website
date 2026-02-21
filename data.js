@@ -3,14 +3,14 @@
 
 // Marquee brand logos
 const brands = [
-    { name: "oxxio", src: "https://cdn.prod.website-files.com/683863cbe1f5a81b667b9939/686bc2c07339dde8931c0c50_oxxio_logo.svg" },
-    { name: "hema", src: "https://cdn.prod.website-files.com/683863cbe1f5a81b667b9939/686bc2d117d329bcecd8377b_hema_logo.svg" },
-    { name: "kfc", src: "https://cdn.prod.website-files.com/683863cbe1f5a81b667b9939/686bc2b720d4c815b09435c2_KFC_Logo.svg" },
-    { name: "swapfiets", src: "https://cdn.prod.website-files.com/683863cbe1f5a81b667b9939/686bc2d7cace3b14a9d8aa44_swapfiets_logo.svg" },
-    { name: "anwb", src: "https://cdn.prod.website-files.com/683863cbe1f5a81b667b9939/686bc2a8f4b310a3d6a5ce7d_anwb_logo.svg" },
-    { name: "netflix", src: "https://cdn.prod.website-files.com/683863cbe1f5a81b667b9939/686bc2c7844be9421f0335c7_netflix_logo.svg" },
-    { name: "ace-tate", src: "https://cdn.prod.website-files.com/683863cbe1f5a81b667b9939/686bc299e71b345ff0fd4429_ace_tate_kigi.svg" },
-    { name: "getir", src: "https://cdn.prod.website-files.com/683863cbe1f5a81b667b9939/686bc3846484817fc9124f30_getir_logo.svg" }
+    { name: "oxxio", src: "assets/Brand Logos SVG/oxxio_logo.svg" },
+    { name: "hema", src: "assets/Brand Logos SVG/hema_logo.svg" },
+    { name: "kfc", src: "assets/Brand Logos SVG/kfc_logo.svg" },
+    { name: "swapfiets", src: "assets/Brand Logos SVG/swapfiets_logo.svg" },
+    { name: "anwb", src: "assets/Brand Logos SVG/anwb_logo.svg" },
+    { name: "netflix", src: "assets/Brand Logos SVG/netflix_logo.svg" },
+    { name: "ace-tate", src: "assets/Brand Logos SVG/ace_tate_logo.svg" },
+    { name: "getir", src: "assets/Brand Logos SVG/getir_logo.svg" }
 ];
 
 // Marquee background colors
