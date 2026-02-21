@@ -337,38 +337,31 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     document.addEventListener('DOMContentLoaded', populateMarquees);
 }
 
-// Social Wiggle Animation
-const wiggleElements = document.querySelectorAll('[data-wiggle]');
+// ─── Wiggle Animation ────────────────────────────────────────────────────────
+// Intensities are controlled by WIGGLE_CONFIG in data.js — edit there.
 
-wiggleElements.forEach(element => {
-    const intensity = parseFloat(element.getAttribute('data-wiggle')) || 5;
+function initWiggle(element, intensity) {
     const target = element.querySelector('[data-wiggle-target]') || element;
-
-    // Set origin to center for proper wiggle
-    gsap.set(target, { transformOrigin: "center center" });
-
-    let wiggleTween;
-
+    gsap.set(target, { transformOrigin: 'center center' });
+    let tween;
     element.addEventListener('mouseenter', () => {
-        wiggleTween = gsap.to(target, {
-            rotation: intensity,
-            duration: 0.14,
-            repeat: -1,
-            yoyo: true,
-            ease: "steps(1)"
-        });
+        tween = gsap.to(target, { rotation: intensity, duration: 0.17, repeat: -1, yoyo: true, ease: 'steps(1)' });
     });
-
     element.addEventListener('mouseleave', () => {
-        if (wiggleTween) {
-            wiggleTween.kill();
-            gsap.to(target, {
-                rotation: 0,
-                duration: 0.3,
-                ease: "power2.out"
-            });
-        }
+        if (tween) { tween.kill(); gsap.to(target, { rotation: 0, duration: 0.3, ease: 'power2.out' }); }
     });
+}
+
+// Map each element to its WIGGLE_CONFIG key
+const WIGGLE_TARGETS = [
+    { selector: '.footer-column:first-child h3', key: 'jobHeading' },
+    { selector: '.footer-map-link span', key: 'googleMap' },
+    { selector: '.footer-email', key: 'email' },
+    { selector: '.footer-whatsapp', key: 'whatsapp' },
+];
+
+WIGGLE_TARGETS.forEach(({ selector, key }) => {
+    document.querySelectorAll(selector).forEach(el => initWiggle(el, WIGGLE_CONFIG[key]));
 });
 
 // Dynamic Tab Title Change
@@ -494,20 +487,9 @@ function injectSocialIcons() {
     const container = document.getElementById('footer-socials');
     if (!container) return;
     container.innerHTML = SOCIAL_ICONS.map(({ href, label, svg }) =>
-        '<a data-custom-cursor="click" data-wiggle="4" href="' + href + '" target="_blank" rel="noopener noreferrer" class="single-social w-inline-block" aria-label="' + label + '">' + svg + '</a>'
+        '<a data-custom-cursor="click" href="' + href + '" target="_blank" rel="noopener noreferrer" class="single-social w-inline-block" aria-label="' + label + '">' + svg + '</a>'
     ).join('');
-    container.querySelectorAll('[data-wiggle]').forEach(el => {
-        const intensity = parseFloat(el.getAttribute('data-wiggle')) || 5;
-        const target = el.querySelector('[data-wiggle-target]') || el;
-        gsap.set(target, { transformOrigin: 'center center' });
-        let tween;
-        el.addEventListener('mouseenter', () => {
-            tween = gsap.to(target, { rotation: intensity, duration: 0.14, repeat: -1, yoyo: true, ease: 'steps(1)' });
-        });
-        el.addEventListener('mouseleave', () => {
-            if (tween) { tween.kill(); gsap.to(target, { rotation: 0, duration: 0.3, ease: 'power2.out' }); }
-        });
-    });
+    container.querySelectorAll('.single-social').forEach(el => initWiggle(el, WIGGLE_CONFIG.socials));
 }
 
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
