@@ -437,47 +437,73 @@ gsap.to(footerStickers, {
     }
 });
 
-// ─── Footer Sticker Hover "Invisible Energy Push" Animation ──────────────
+// ─── Footer Sticker — Cursor-Velocity Push ───────────────────────────────────
+// Fast cursor swipe near a sticker → sticker shoves in that direction.
+// Cursor stops → sticker automatically springs back to original position.
+// Cursor ON the sticker → no effect.
+
 footerStickers.forEach((sticker, i) => {
     const baseRotation = stickerRotations[i % stickerRotations.length] * 0.7;
 
-    sticker.addEventListener('mousemove', (e) => {
+    const PROXIMITY_RADIUS = 180;  // px — zone around sticker where push activates
+    const STRENGTH = 4;            // multiplier on raw cursor delta
+    const MAX_PUSH = 55;          // max displacement in px
+    const MIN_SPEED = 3;           // ignore tiny slow drifts (px/event)
+
+    let prevX = 0, prevY = 0;
+
+    const clamp = (v, max) => Math.max(-max, Math.min(max, v));
+
+    document.addEventListener('mousemove', (e) => {
+        const dx = e.clientX - prevX;
+        const dy = e.clientY - prevY;
+        prevX = e.clientX;
+        prevY = e.clientY;
+
         const rect = sticker.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
 
-        // Calculate vector from cursor to center
-        const deltaX = e.clientX - centerX;
-        const deltaY = e.clientY - centerY;
+        // Is cursor physically ON the sticker?
+        const onSticker = (
+            e.clientX >= rect.left && e.clientX <= rect.right &&
+            e.clientY >= rect.top && e.clientY <= rect.bottom
+        );
 
-        // Push intensity: more when closer to center
-        // Max push distance ~30px + random jitter
-        const pushIntensity = 35;
-        const jitter = () => (Math.random() - 0.5) * 15; // Fast jitter
+        const speed = Math.hypot(dx, dy);
 
-        // Move AWAY from the cursor
-        gsap.to(sticker, {
-            x: -deltaX * 1.5 + jitter(),
-            y: -deltaY * 1.5 + jitter(),
-            rotation: baseRotation + (deltaX * 0.2) + (Math.random() - 0.5) * 30,
-            duration: 0.1, // Quick response
-            ease: "none",  // Non-smooth feel
-            overwrite: "auto"
-        });
-    });
+        if (!onSticker && dist < PROXIMITY_RADIUS && speed > MIN_SPEED) {
+            // Proximity falloff — weaker push farther from sticker
+            const falloff = 1 - (dist / PROXIMITY_RADIUS);
 
-    sticker.addEventListener('mouseleave', () => {
-        // Smooth snap back on leave
-        gsap.to(sticker, {
-            x: 0,
-            y: 0,
-            rotation: baseRotation,
-            duration: 0.8,
-            ease: "elastic.out(1, 0.3)",
-            overwrite: true
-        });
+            const pushX = clamp(dx * STRENGTH * falloff, MAX_PUSH);
+            const pushY = clamp(dy * STRENGTH * falloff, MAX_PUSH);
+
+            // 1) Snap to push position quickly
+            gsap.killTweensOf(sticker);
+            gsap.to(sticker, {
+                x: pushX,
+                y: pushY,
+                rotation: baseRotation + pushX * 0.25,
+                duration: 0.18,
+                ease: 'power3.out'
+            });
+
+            // 2) Auto-spring back after the push settles
+            gsap.to(sticker, {
+                x: 0,
+                y: 0,
+                rotation: baseRotation,
+                duration: 1.1,
+                ease: 'elastic.out(1, 0.35)',
+                delay: 0.18
+            });
+        }
     });
 });
+
+
 
 // ─── Footer Map Link — underline SVG hover draw/undraw animation ───
 const footerMapLink = document.querySelector('.footer-map-link');
