@@ -4,8 +4,9 @@ A highly interactive, visually stunning recreation of the **Truus.co** website, 
 
 <table>
   <tr>
-    <td><img width="100%" alt="Screenshot 1" src="https://github.com/user-attachments/assets/cb80f406-998e-4853-9ea5-7dec87952117" /></td>
-    <td><img width="100%" alt="Screenshot 2" src="https://github.com/user-attachments/assets/9ca5af12-5e0b-4b81-954c-1dcb484c671a" /></td>
+    <td><img width="100%" alt="Service Card Section" src="https://github.com/user-attachments/assets/cb80f406-998e-4853-9ea5-7dec87952117" /></td>
+    <td><img width="100%" alt="Double marquee section" src="https://github.com/user-attachments/assets/9ca5af12-5e0b-4b81-954c-1dcb484c671a" /></td>
+    <td><img width="100%" alt="footer section" src="https://github.com/user-attachments/assets/6335c2ee-a2ad-4795-96ad-e1b9841cacf0" /></td>
   </tr>
 </table>
 
