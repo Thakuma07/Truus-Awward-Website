@@ -614,26 +614,9 @@ if (cursorBubble) {
     });
 
     document.addEventListener("mouseover", (e) => {
-        let target = e.target;
-        let found = false;
-
-        while (target && target.tagName !== 'HTML' && target !== document) {
-            // Check for common clickable tags and classes
-            if (target.tagName === 'A' || target.tagName === 'BUTTON' || target.classList.contains('card')) {
-                found = true;
-                break;
-            }
-            // Check if element has pointer cursor style assigned
-            try {
-                const cursorStyle = window.getComputedStyle(target).cursor;
-                if (cursorStyle === 'pointer' || cursorStyle.includes('pointer')) {
-                    found = true;
-                    break;
-                }
-            } catch (err) { }
-
-            target = target.parentNode;
-        }
+        // Target specific elements requested by the user
+        const targetSelector = '.footer-column h3, .footer-map-link span, .footer-email, .footer-whatsapp, .single-social';
+        const found = !!e.target.closest(targetSelector);
 
         if (found && !isHoveringClickable) {
             isHoveringClickable = true;
