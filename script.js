@@ -593,4 +593,71 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     injectCards();
 } else {
     document.addEventListener('DOMContentLoaded', injectCards);
+<<<<<<< HEAD
 }
+=======
+}
+
+// --- Custom Cursor Bubble Logic ---
+const cursorBubble = document.querySelector('.cursor-bubble');
+if (cursorBubble) {
+    const xTo = gsap.quickTo(cursorBubble, "x", { duration: 0.5, ease: "power3" });
+    const yTo = gsap.quickTo(cursorBubble, "y", { duration: 0.5, ease: "power3" });
+
+    let isHoveringClickable = false;
+
+    // Set initial custom state so it spawns tilted the very first time
+    gsap.set(cursorBubble, { rotation: -30 });
+
+    window.addEventListener("mousemove", (e) => {
+        // Offset bubble slightly from cursor tip
+        xTo(e.clientX + 13);
+        yTo(e.clientY - 43);
+    });
+
+    document.addEventListener("mouseover", (e) => {
+        let target = e.target;
+        let found = false;
+
+        while (target && target.tagName !== 'HTML' && target !== document) {
+            // Check for common clickable tags and classes
+            if (target.tagName === 'A' || target.tagName === 'BUTTON' || target.classList.contains('card')) {
+                found = true;
+                break;
+            }
+            // Check if element has pointer cursor style assigned
+            try {
+                const cursorStyle = window.getComputedStyle(target).cursor;
+                if (cursorStyle === 'pointer' || cursorStyle.includes('pointer')) {
+                    found = true;
+                    break;
+                }
+            } catch (err) { }
+
+            target = target.parentNode;
+        }
+
+        if (found && !isHoveringClickable) {
+            isHoveringClickable = true;
+            // Explicitly kill any pending delayed animations for these properties ONLY (preserves x/y mouse tracking)
+            gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
+            // Pop out with delay, starting from a tilted angle (set during hide)
+            gsap.to(cursorBubble, { opacity: 1, scale: 1, rotation: 0, duration: 1.7, delay: 0.1, ease: "elastic.out(1, 0.4)" });
+        } else if (!found && isHoveringClickable) {
+            isHoveringClickable = false;
+            // Explicitly kill pending pop-outs
+            gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
+            // Hide and tilt it so next time it starts tilted
+            gsap.to(cursorBubble, { opacity: 1, scale: 0, rotation: -30, duration: 0.3, ease: "sine.inOut" });
+        }
+    });
+
+    document.addEventListener("mouseleave", () => {
+        if (isHoveringClickable) {
+            isHoveringClickable = false;
+            gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
+            gsap.to(cursorBubble, { opacity: 1, scale: 0, rotation: -30, duration: 0.3, ease: "sine.inOut" });
+        }
+    });
+}
+>>>>>>> b01cfa192f890ccf41c210fa4e623e24a692e749
