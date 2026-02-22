@@ -593,10 +593,8 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     injectCards();
 } else {
     document.addEventListener('DOMContentLoaded', injectCards);
-<<<<<<< HEAD
 }
-=======
-}
+
 
 // --- Custom Cursor Bubble Logic ---
 const cursorBubble = document.querySelector('.cursor-bubble');
@@ -660,4 +658,4 @@ if (cursorBubble) {
         }
     });
 }
->>>>>>> b01cfa192f890ccf41c210fa4e623e24a692e749
+
