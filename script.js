@@ -596,6 +596,56 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 }
 
 
+// --- Footer Credits Pop-out Animation ---
+const creditsWrapper = document.querySelector('.footer-credits-wrapper');
+if (creditsWrapper) {
+    const creditsBox = creditsWrapper.querySelector('.credits-box');
+    const creditsTexts = creditsBox.querySelectorAll('.credits-label, .credits-name');
+
+    // Create a timeline for the credits animation
+    const creditsTl = gsap.timeline({
+        paused: true,
+        onReverseComplete: () => gsap.set(creditsBox, { visibility: 'hidden' })
+    });
+
+    creditsTl.fromTo(creditsBox,
+        {
+            scale: 0,
+            opacity: 0,
+            y: 50,
+            x: 50,
+            transformOrigin: "bottom right"
+        },
+        {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+            x: 0,
+            duration: 0.5,
+            ease: "back.out(1.5)"
+        }
+    ).fromTo(creditsTexts,
+        { y: "100%" },
+        {
+            y: "0%",
+            duration: 0.4,
+            stagger: 0.05,
+            ease: "power2.out"
+        },
+        "-=0.3"
+    );
+
+    creditsWrapper.addEventListener('mouseenter', () => {
+        gsap.set(creditsBox, { visibility: 'visible' });
+        creditsTl.play();
+    });
+
+    creditsWrapper.addEventListener('mouseleave', () => {
+        creditsTl.reverse();
+    });
+}
+
+
 // --- Custom Cursor Bubble Logic ---
 const cursorBubble = document.querySelector('.cursor-bubble');
 if (cursorBubble) {
@@ -641,4 +691,5 @@ if (cursorBubble) {
         }
     });
 }
+
 
