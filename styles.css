@@ -737,7 +737,7 @@ body::-webkit-scrollbar {
     text-decoration: none;
     width: fit-content;
     display: inline-block;
-    cursor: url(assets/cursor-pointer.svg) 12 12, pointer;
+    cursor: url("assets/Cursor SVG/cursor-pointer.svg") 12 12, pointer;
 }
 
 .footer-note {
