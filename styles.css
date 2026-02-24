@@ -807,22 +807,77 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+.footer-credits-wrapper {
+    position: relative;
+    pointer-events: auto;
+    margin-right: -25px;
+    margin-bottom: -25px;
+    z-index: 100;
+}
+
 .footer-credits {
     background: #000;
     font-family: "Epilogue";
     /* color: rgb(206, 206, 206); */
     color: #fff;
-    margin-right: -25px;
-    margin-bottom: -25px;
-    padding: 3px 8px;
+    padding: 3px 12px;
     border-radius: 20px;
     border-bottom-left-radius: 1px;
     text-decoration: none;
     font-size: 1rem;
     pointer-events: auto;
     letter-spacing: 0.5px;
-
+    display: inline-block;
     cursor: url("assets/Cursor SVG/cursor-pointer.svg") 12 12, pointer;
+}
+
+.credits-box {
+    position: absolute;
+    bottom: calc(100% + 15px);
+    right: 0;
+    background: #000;
+    padding: 40px 38px;
+    border-radius: 12px;
+    display: flex;
+    gap: 38px;
+    opacity: 0;
+    visibility: hidden;
+    transform-origin: bottom right;
+    white-space: nowrap;
+    border: 3px solid #fff;
+    pointer-events: none;
+}
+
+/* Removed CSS hover rule to use GSAP instead */
+
+.credits-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.overflow-wrapper {
+    overflow: hidden;
+}
+
+.credits-label,
+.credits-name {
+    display: inline-block;
+}
+
+.credits-label {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 950;
+    font-family: 'Epilogue', sans-serif;
+}
+
+.credits-name {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 450;
+    font-family: 'Epilogue', sans-serif;
+    opacity: 0.9;
 }
 
 .footer-stickers {
@@ -1236,10 +1291,26 @@ body::-webkit-scrollbar {
     }
 
     /* Credits badge */
-    .footer-credits {
+    .footer-credits-wrapper {
         margin-right: -15px;
         margin-bottom: -15px;
+    }
+
+    .footer-credits {
         font-size: 0.75rem;
+    }
+
+    .credits-box {
+        padding: 16px 20px;
+        gap: 20px;
+    }
+
+    .credits-label {
+        font-size: 0.85rem;
+    }
+
+    .credits-name {
+        font-size: 0.95rem;
     }
 }
 
