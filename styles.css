@@ -1346,3 +1346,14 @@ body::-webkit-scrollbar {
     pointer-events: none;
     color: var(--color-darkblue);
 }
+
+/* Transition States */
+body.is-transitioning {
+    pointer-events: none !important;
+}
+
+body.is-transitioning .cursor-bubble {
+    opacity: 0 !important;
+    transform: scale(0) !important;
+    display: none !important;
+}
