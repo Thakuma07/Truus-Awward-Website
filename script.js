@@ -748,18 +748,25 @@ if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
         const randomColor = transitionColors[Math.floor(Math.random() * transitionColors.length)];
         transitionScribbleSvg.style.color = randomColor;
 
+        // Contrast: if the scribble is a light color, make logo black. Otherwise, white.
+        const lightColors = ['var(--color-lightblue)', 'var(--color-lightgreen)', 'var(--color-pink)'];
+        const logoColor = lightColors.includes(randomColor) ? '#000' : '#fff';
+
         // Create transition logo if missing
         let transitionLogo = document.querySelector('.transition-logo');
         if (!transitionLogo) {
             transitionLogo = document.createElement('div');
             transitionLogo.className = 'transition-logo';
-            transitionLogo.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10000; pointer-events:none; opacity:0; color:#fff; display:flex; justify-content:center; align-items:center;';
+            transitionLogo.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10000; pointer-events:none; opacity:0; display:flex; justify-content:center; align-items:center; transition: color 0.1s;';
             const svgClone = document.querySelector('.logo-truus').cloneNode(true);
-            svgClone.style.width = '240px';
+            svgClone.style.width = '150px';
             svgClone.style.height = 'auto';
             transitionLogo.appendChild(svgClone);
             document.body.appendChild(transitionLogo);
         }
+
+        // Apply dynamic contrast logo color for the current scribble pass
+        transitionLogo.style.color = logoColor;
 
         // Set initial states (equivalent to drawSVG: '0% 0%')
         gsap.set(transitionScribblePath, {
@@ -840,16 +847,15 @@ if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
             }
         }, durIn * 0.5);
 
-        // Fade out logo as scribble is removed
-        drawTl.to(transitionLogo, {
+        // Vanish exactly when the scribble "whip" passes it. Like a cloth wiping a table.
+        // Zero duration = no fade, no shrink, no move, no clip-path. Just a clean disappearance.
+        drawTl.set(transitionLogo, {
             autoAlpha: 0,
-            duration: durOut * 0.5,
-            ease: "power2.inOut",
             onComplete: () => {
                 gsap.killTweensOf(transitionLogo.querySelector('svg'));
                 gsap.set(transitionLogo.querySelector('svg'), { rotation: 0 });
             }
-        }, durIn + (durOut * 0.4));
+        }, durIn + (durOut * 0.48));
     };
 
     // Attach to real logo
