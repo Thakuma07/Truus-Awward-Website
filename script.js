@@ -860,4 +860,12 @@ if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
 
     // Attach to real logo
     logoTruusClickable.addEventListener('click', runScribbleAnimation);
+
+    // Run the animation automatically on initial load or reload
+    window.addEventListener('load', () => {
+        // Add a tiny delay to ensure everything is visually ready before starting the "reveal"
+        setTimeout(() => {
+            runScribbleAnimation(null);
+        }, 100);
+    });
 }
