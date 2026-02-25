@@ -1,3 +1,8 @@
+
+// 
+//  INITIALIZATION & CONFIGURATION 
+// 
+
 ﻿// ─── Animation Configurations ─────────────────────────────────────────────
 const ANIMATION_CONFIG = {
     transitionScribble: {
@@ -25,6 +30,105 @@ gsap.ticker.add((time) => {
 });
 
 gsap.ticker.lagSmoothing(0); // prevent GSAP catching up after tab focus
+
+
+// 
+//  GLOBAL & UTILITY COMPONENTS 
+// 
+
+// --- Custom Cursor Bubble Logic ---
+const cursorBubble = document.querySelector('.cursor-bubble');
+if (cursorBubble) {
+    const xTo = gsap.quickTo(cursorBubble, "x", { duration: 0.5, ease: "power3" });
+    const yTo = gsap.quickTo(cursorBubble, "y", { duration: 0.5, ease: "power3" });
+
+    let isHoveringClickable = false;
+
+    // Set initial custom state so it spawns tilted the very first time
+    gsap.set(cursorBubble, { rotation: -30 });
+
+    window.addEventListener("mousemove", (e) => {
+        // Offset bubble slightly from cursor tip
+        xTo(e.clientX + 13);
+        yTo(e.clientY - 43);
+    });
+
+    document.addEventListener("mouseover", (e) => {
+        // Target specific elements requested by the user
+        const targetSelector = '.footer-column h3, .footer-map-link span, .footer-email, .footer-whatsapp, .single-social, .logo-truus';
+        const found = e.target.closest(targetSelector);
+
+        if (found && !isHoveringClickable) {
+            isHoveringClickable = true;
+            if (found.matches('.logo-truus')) {
+                cursorBubble.textContent = "to home";
+            } else {
+                cursorBubble.textContent = "click";
+            }
+            // Explicitly kill any pending delayed animations for these properties ONLY (preserves x/y mouse tracking)
+            gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
+            // Pop out with delay, starting from a tilted angle (set during hide)
+            gsap.to(cursorBubble, { opacity: 1, scale: 1, rotation: 0, duration: 1.7, delay: 0.1, ease: "elastic.out(1, 0.4)" });
+        } else if (!found && isHoveringClickable) {
+            isHoveringClickable = false;
+            // Explicitly kill pending pop-outs
+            gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
+            // Hide and tilt it so next time it starts tilted
+            gsap.to(cursorBubble, { opacity: 1, scale: 0, rotation: -30, duration: 0.3, ease: "sine.inOut" });
+        }
+    });
+
+    document.addEventListener("mouseleave", () => {
+        if (isHoveringClickable) {
+            isHoveringClickable = false;
+            gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
+            gsap.to(cursorBubble, { opacity: 1, scale: 0, rotation: -30, duration: 0.3, ease: "sine.inOut" });
+        }
+    });
+}
+
+// Dynamic Tab Title Change
+const originalTitle = document.title;
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        document.title = "Hey, over here!👋 - Truus";
+    } else {
+        document.title = originalTitle;
+    }
+});
+
+// ─── Wiggle Animation ────────────────────────────────────────────────────────
+// Intensities are controlled by WIGGLE_CONFIG in data.js — edit there.
+
+function initWiggle(element, intensity) {
+    const target = element.querySelector('[data-wiggle-target]') || element;
+    gsap.set(target, { transformOrigin: 'center center' });
+    let tween;
+    element.addEventListener('mouseenter', () => {
+        tween = gsap.to(target, { rotation: intensity, duration: 0.17, repeat: -1, yoyo: true, ease: 'steps(1)' });
+    });
+    element.addEventListener('mouseleave', () => {
+        if (tween) { tween.kill(); gsap.to(target, { rotation: 0, duration: 0.3, ease: 'power2.out' }); }
+    });
+}
+
+// Map each element to its WIGGLE_CONFIG key
+const WIGGLE_TARGETS = [
+    { selector: '.logo-truus', key: 'logoTruus' },
+    { selector: '.footer-column:first-child h3', key: 'jobHeading' },
+    { selector: '.footer-map-link span', key: 'googleMap' },
+    { selector: '.footer-email', key: 'email' },
+    { selector: '.footer-whatsapp', key: 'whatsapp' },
+];
+
+WIGGLE_TARGETS.forEach(({ selector, key }) => {
+    document.querySelectorAll(selector).forEach(el => initWiggle(el, WIGGLE_CONFIG[key]));
+});
+
+
+// 
+//  NAVBAR & HERO TRANSITION 
+// 
 
 // Navbar scroll effect
 const navbar = document.querySelector('.navbar');
@@ -69,6 +173,171 @@ const updateNavbarColor = () => {
 window.addEventListener('scroll', updateNavbarColor);
 updateNavbarColor(); // Initial check
 
+// ─── Logo Click Transition ──────────────────────────────────────────────────
+const logoTruusClickable = document.querySelector('.logo-truus');
+const transitionScribblePath = document.querySelector('.transition-scribble path');
+const transitionScribbleSvg = document.querySelector('.transition-scribble');
+
+if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
+    // Collect all colors from :root (except bg-color) for random selection
+    const transitionColors = [
+        'var(--color-green)',
+        'var(--color-lightblue)',
+        'var(--color-darkblue)',
+        'var(--color-lightgreen)',
+        'var(--color-orange)',
+        'var(--color-maroon)',
+        'var(--color-pink)'
+    ];
+
+    const runScribbleAnimation = (e) => {
+        if (e) e.preventDefault();
+
+        // Prevent multiple clicks while animating
+        if (gsap.isTweening(transitionScribblePath) || gsap.isTweening(transitionScribbleSvg) || document.body.classList.contains('is-transitioning')) return;
+
+        // Fetch settings from config object
+        const config = ANIMATION_CONFIG.transitionScribble;
+        const currentScale = config.scale;
+        const durIn = config.durationIn || 0.8;
+        const durOut = config.durationOut || 1.5;
+
+        // Apply scale globally on the SVG
+        gsap.set(transitionScribbleSvg, { scale: currentScale });
+
+        const pathLength = transitionScribblePath.getTotalLength();
+        const l = pathLength + 5; // tiny buffer
+
+        // Pick a random non-repeating color (simplified version of their getNonRepeatingRandomTheme)
+        const randomColor = transitionColors[Math.floor(Math.random() * transitionColors.length)];
+        transitionScribbleSvg.style.color = randomColor;
+
+        // Contrast: if the scribble is a light color, make logo black. Otherwise, white.
+        const lightColors = ['var(--color-lightblue)', 'var(--color-lightgreen)', 'var(--color-pink)'];
+        const logoColor = lightColors.includes(randomColor) ? '#000' : '#fff';
+
+        // Create transition logo if missing
+        let transitionLogo = document.querySelector('.transition-logo');
+        if (!transitionLogo) {
+            transitionLogo = document.createElement('div');
+            transitionLogo.className = 'transition-logo';
+            transitionLogo.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10000; pointer-events:none; opacity:0; display:flex; justify-content:center; align-items:center; transition: color 0.1s;';
+            const svgClone = document.querySelector('.logo-truus').cloneNode(true);
+            svgClone.style.width = '150px';
+            svgClone.style.height = 'auto';
+            transitionLogo.appendChild(svgClone);
+            document.body.appendChild(transitionLogo);
+        }
+
+        // Apply dynamic contrast logo color for the current scribble pass
+        transitionLogo.style.color = logoColor;
+
+        // Set initial states (equivalent to drawSVG: '0% 0%')
+        gsap.set(transitionScribblePath, {
+            strokeDasharray: l,
+            strokeDashoffset: l,
+            strokeWidth: config.strokeWidthStart,
+            opacity: 1
+        });
+        gsap.set(transitionScribbleSvg, { opacity: 1, x: 0, y: 0, rotation: 0 });
+        gsap.set(transitionLogo, { opacity: 0, scale: 1 });
+
+        // Hide cursor bubble and disable pointer events
+        document.body.classList.add('is-transitioning');
+        const cursorBubble = document.querySelector('.cursor-bubble');
+        if (cursorBubble) gsap.to(cursorBubble, { opacity: 0, duration: 0.2 });
+
+        let drawTl = gsap.timeline({
+            onComplete: () => {
+                document.body.classList.remove('is-transitioning');
+                gsap.set(transitionScribblePath, { strokeWidth: "0%" });
+                gsap.set(transitionLogo, { opacity: 0 });
+            }
+        });
+
+        // 1. Draw from A to B (equivalent to drawSVG: '0% 100%')
+        drawTl.to(transitionScribblePath, {
+            strokeDashoffset: 0,
+            duration: durIn,
+            ease: "power1.inOut"
+        }, 0);
+
+        drawTl.to(transitionScribblePath, {
+            strokeWidth: config.strokeWidthMax,
+            duration: durIn,
+            ease: "power2.inOut"
+        }, 0);
+
+        // Mask transition: scroll to top exactly when the screen is fully masked
+        drawTl.call(() => {
+            if (typeof lenis !== 'undefined') {
+                lenis.scrollTo(0, { immediate: true });
+            } else {
+                window.scrollTo(0, 0);
+            }
+        }, null, durIn);
+
+        // 2. Remove from A to B (equivalent to drawSVG: '100% 100%')
+        drawTl.to(transitionScribblePath, {
+            strokeDashoffset: -l,
+            duration: durOut,
+            ease: "power2.inOut"
+        }, durIn);
+
+        drawTl.to(transitionScribblePath, {
+            strokeWidth: config.strokeWidthStart,
+            duration: durOut,
+            ease: "power2.inOut"
+        }, durIn);
+
+        // 3. Logo Animation (AutoAlpha 1 at 0.4s, AutoAlpha 0 at 1.5s as per Truus logic)
+        // Ensure starting state
+        drawTl.set(transitionLogo, { autoAlpha: 0 }, 0);
+
+        drawTl.to(transitionLogo, {
+            autoAlpha: 1,
+            duration: durIn * 0.5,
+            ease: "power2.out",
+            onStart: () => {
+                // Apply continuous wiggle effect
+                gsap.to(transitionLogo.querySelector('svg'), {
+                    rotation: 5,
+                    duration: 0.15,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "steps(1)",
+                    overwrite: "auto"
+                });
+            }
+        }, durIn * 0.5);
+
+        // Vanish exactly when the scribble "whip" passes it. Like a cloth wiping a table.
+        // Zero duration = no fade, no shrink, no move, no clip-path. Just a clean disappearance.
+        drawTl.set(transitionLogo, {
+            autoAlpha: 0,
+            onComplete: () => {
+                gsap.killTweensOf(transitionLogo.querySelector('svg'));
+                gsap.set(transitionLogo.querySelector('svg'), { rotation: 0 });
+            }
+        }, durIn + (durOut * 0.48));
+    };
+
+    // Attach to real logo
+    logoTruusClickable.addEventListener('click', runScribbleAnimation);
+
+    // Run the animation automatically on initial load or reload
+    window.addEventListener('load', () => {
+        // Add a tiny delay to ensure everything is visually ready before starting the "reveal"
+        setTimeout(() => {
+            runScribbleAnimation(null);
+        }, 100);
+    });
+}
+
+// 
+//  HERO & CONTENT SECTIONS (CARDS) 
+// 
+
 // Underline Animation on Scroll
 gsap.to(".title-underline-svg path", {
     strokeDashoffset: 0,
@@ -81,6 +350,38 @@ gsap.to(".title-underline-svg path", {
         once: true // Only animate once
     }
 });
+
+// --- Service Cards â€” generated from JS data to reduce HTML size ---
+// CARDS_DATA[] is defined in data.js
+
+const BULLET_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="16" class="services-card__bullet-svg" aria-hidden="true"><use href="#bullet-icon" /></svg>';
+
+function buildCard({ color, sticker, title, services }) {
+    const items = services.map(s => '<li>' + BULLET_SVG + s + '</li>').join('');
+    return (
+        '<div class="card card-' + color + '">' +
+        '<div class="card-sticker sticker-' + sticker + '">' +
+        '<img src="assets/Card-Sticker SVG/sticker-' + sticker + '.svg" alt="" width="100%" loading="lazy" aria-hidden="true">' +
+        '</div>' +
+        '<h3 class="card-title">' + title + '</h3>' +
+        '<svg width="100%" height="10" class="card-divider-svg" aria-hidden="true"><use href="#card-divider" /></svg>' +
+        '<ul class="card-list">' + items + '</ul>' +
+        '</div>'
+    );
+}
+
+function injectCards() {
+    const wrapper = document.getElementById('cards-wrapper');
+    if (!wrapper) return;
+    wrapper.innerHTML = CARDS_DATA.map(buildCard).join('');
+    initCardAnimations(); // bind GSAP hover now that cards are in the DOM
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    injectCards();
+} else {
+    document.addEventListener('DOMContentLoaded', injectCards);
+}
 
 // GSAP Truus-style Card Hover Animation — called after cards are injected into DOM
 const isMobile = window.matchMedia('(max-width: 768px)').matches;
@@ -266,36 +567,10 @@ function initCardAnimations() {
     }
 } // end initCardAnimations
 
-// Double Marquee Section Animations
-gsap.set(".marquee-left .marquee-svg-item:nth-child(2) path", { strokeDashoffset: 1000 });
 
-const marqueeTl = gsap.timeline({
-    scrollTrigger: {
-        trigger: ".Double-marquee",
-        start: "top 70%",
-        toggleActions: "play none none none",
-        once: true
-    }
-});
-
-marqueeTl.to(".marquee-underline", {
-    scaleX: 1,
-    opacity: 1,
-    duration: 1,
-    ease: "power2.out"
-})
-    .to(".marquee-left .marquee-svg-item:nth-child(1)", {
-        scale: 1,
-        opacity: 1,
-        rotation: -10,
-        duration: 0.6,
-        ease: "back.out(1.7)"
-    }, "-=0.5")
-    .to(".marquee-left .marquee-svg-item:nth-child(2) path", {
-        strokeDashoffset: 0,
-        duration: 1.5,
-        ease: "power2.out"
-    }, "-=0.3");
+// 
+//  DOUBLE MARQUEE SECTION 
+// 
 
 // Marquee Randomization Logic
 // brands[] and colors[] are defined in data.js
@@ -387,43 +662,150 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     document.addEventListener('DOMContentLoaded', populateMarquees);
 }
 
-// ─── Wiggle Animation ────────────────────────────────────────────────────────
-// Intensities are controlled by WIGGLE_CONFIG in data.js — edit there.
+// Double Marquee Section Animations
+gsap.set(".marquee-left .marquee-svg-item:nth-child(2) path", { strokeDashoffset: 1000 });
 
-function initWiggle(element, intensity) {
-    const target = element.querySelector('[data-wiggle-target]') || element;
-    gsap.set(target, { transformOrigin: 'center center' });
-    let tween;
-    element.addEventListener('mouseenter', () => {
-        tween = gsap.to(target, { rotation: intensity, duration: 0.17, repeat: -1, yoyo: true, ease: 'steps(1)' });
+const marqueeTl = gsap.timeline({
+    scrollTrigger: {
+        trigger: ".Double-marquee",
+        start: "top 70%",
+        toggleActions: "play none none none",
+        once: true
+    }
+});
+
+marqueeTl.to(".marquee-underline", {
+    scaleX: 1,
+    opacity: 1,
+    duration: 1,
+    ease: "power2.out"
+})
+    .to(".marquee-left .marquee-svg-item:nth-child(1)", {
+        scale: 1,
+        opacity: 1,
+        rotation: -10,
+        duration: 0.6,
+        ease: "back.out(1.7)"
+    }, "-=0.5")
+    .to(".marquee-left .marquee-svg-item:nth-child(2) path", {
+        strokeDashoffset: 0,
+        duration: 1.5,
+        ease: "power2.out"
+    }, "-=0.3");
+
+
+// 
+//  FOOTER SECTION 
+// 
+
+// ─── Footer Map Link — underline SVG hover draw/undraw animation ───
+const footerMapLink = document.querySelector('.footer-map-link');
+if (footerMapLink) {
+    const mapSvgPaths = footerMapLink.querySelectorAll('.draw-btn__svg path');
+
+    // Measure each path length and start fully drawn (visible)
+    mapSvgPaths.forEach(path => {
+        const length = path.getTotalLength();
+        gsap.set(path, {
+            strokeDasharray: length,
+            strokeDashoffset: 0   // fully visible at rest
+        });
     });
-    element.addEventListener('mouseleave', () => {
-        if (tween) { tween.kill(); gsap.to(target, { rotation: 0, duration: 0.3, ease: 'power2.out' }); }
+
+    // On hover: wipe out then draw back in
+    footerMapLink.addEventListener('mouseenter', () => {
+        gsap.fromTo(mapSvgPaths,
+            { strokeDashoffset: (i, el) => el.getTotalLength() },
+            {
+                strokeDashoffset: 0,
+                duration: 0.5,
+                ease: 'power2.out',
+                stagger: 0.1,
+                overwrite: true
+            }
+        );
+    });
+
+    // On leave: draw back in if interrupted
+    footerMapLink.addEventListener('mouseleave', () => {
+        gsap.to(mapSvgPaths, {
+            strokeDashoffset: 0,
+            duration: 0.4,
+            ease: 'power2.out',
+            overwrite: true
+        });
     });
 }
 
-// Map each element to its WIGGLE_CONFIG key
-const WIGGLE_TARGETS = [
-    { selector: '.logo-truus', key: 'logoTruus' },
-    { selector: '.footer-column:first-child h3', key: 'jobHeading' },
-    { selector: '.footer-map-link span', key: 'googleMap' },
-    { selector: '.footer-email', key: 'email' },
-    { selector: '.footer-whatsapp', key: 'whatsapp' },
-];
 
-WIGGLE_TARGETS.forEach(({ selector, key }) => {
-    document.querySelectorAll(selector).forEach(el => initWiggle(el, WIGGLE_CONFIG[key]));
-});
+// --- Footer Social Icons - injected from JS to reduce HTML size ---
+// SOCIAL_ICONS[] is defined in data.js
 
-// Dynamic Tab Title Change
-const originalTitle = document.title;
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        document.title = "Hey, over here!👋 - Truus";
-    } else {
-        document.title = originalTitle;
-    }
-});
+function injectSocialIcons() {
+    const container = document.getElementById('footer-socials');
+    if (!container) return;
+    container.innerHTML = SOCIAL_ICONS.map(({ href, label, svg }) =>
+        '<a data-custom-cursor="click" href="' + href + '" target="_blank" rel="noopener noreferrer" class="single-social w-inline-block" aria-label="' + label + '">' + svg + '</a>'
+    ).join('');
+    container.querySelectorAll('.single-social').forEach(el => initWiggle(el, WIGGLE_CONFIG.socials));
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    injectSocialIcons();
+} else {
+    document.addEventListener('DOMContentLoaded', injectSocialIcons);
+}
+
+
+// --- Footer Credits Pop-out Animation ---
+const creditsWrapper = document.querySelector('.footer-credits-wrapper');
+if (creditsWrapper) {
+    const creditsBox = creditsWrapper.querySelector('.credits-box');
+    const creditsTexts = creditsBox.querySelectorAll('.credits-label, .credits-name');
+
+    // Create a timeline for the credits animation
+    const creditsTl = gsap.timeline({
+        paused: true,
+        onReverseComplete: () => gsap.set(creditsBox, { visibility: 'hidden' })
+    });
+
+    creditsTl.fromTo(creditsBox,
+        {
+            scale: 0,
+            opacity: 0,
+            y: 50,
+            x: 50,
+            transformOrigin: "bottom right"
+        },
+        {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+            x: 0,
+            duration: 0.5,
+            ease: "back.out(1.5)"
+        }
+    ).fromTo(creditsTexts,
+        { y: "100%" },
+        {
+            y: "0%",
+            duration: 0.4,
+            stagger: 0.05,
+            ease: "power2.out"
+        },
+        "-=0.3"
+    );
+
+    creditsWrapper.addEventListener('mouseenter', () => {
+        gsap.set(creditsBox, { visibility: 'visible' });
+        creditsTl.play();
+    });
+
+    creditsWrapper.addEventListener('mouseleave', () => {
+        creditsTl.reverse();
+    });
+}
+
 
 // ─── Footer Sticker Pop-Up Animation (on scroll, same as marquee Heart/Hand) ───
 const footerStickers = gsap.utils.toArray('.footer-sticker');
@@ -517,355 +899,3 @@ footerStickers.forEach((sticker, i) => {
 
 
 
-// ─── Footer Map Link — underline SVG hover draw/undraw animation ───
-const footerMapLink = document.querySelector('.footer-map-link');
-if (footerMapLink) {
-    const mapSvgPaths = footerMapLink.querySelectorAll('.draw-btn__svg path');
-
-    // Measure each path length and start fully drawn (visible)
-    mapSvgPaths.forEach(path => {
-        const length = path.getTotalLength();
-        gsap.set(path, {
-            strokeDasharray: length,
-            strokeDashoffset: 0   // fully visible at rest
-        });
-    });
-
-    // On hover: wipe out then draw back in
-    footerMapLink.addEventListener('mouseenter', () => {
-        gsap.fromTo(mapSvgPaths,
-            { strokeDashoffset: (i, el) => el.getTotalLength() },
-            {
-                strokeDashoffset: 0,
-                duration: 0.5,
-                ease: 'power2.out',
-                stagger: 0.1,
-                overwrite: true
-            }
-        );
-    });
-
-    // On leave: draw back in if interrupted
-    footerMapLink.addEventListener('mouseleave', () => {
-        gsap.to(mapSvgPaths, {
-            strokeDashoffset: 0,
-            duration: 0.4,
-            ease: 'power2.out',
-            overwrite: true
-        });
-    });
-}
-
-
-// --- Footer Social Icons - injected from JS to reduce HTML size ---
-// SOCIAL_ICONS[] is defined in data.js
-
-function injectSocialIcons() {
-    const container = document.getElementById('footer-socials');
-    if (!container) return;
-    container.innerHTML = SOCIAL_ICONS.map(({ href, label, svg }) =>
-        '<a data-custom-cursor="click" href="' + href + '" target="_blank" rel="noopener noreferrer" class="single-social w-inline-block" aria-label="' + label + '">' + svg + '</a>'
-    ).join('');
-    container.querySelectorAll('.single-social').forEach(el => initWiggle(el, WIGGLE_CONFIG.socials));
-}
-
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    injectSocialIcons();
-} else {
-    document.addEventListener('DOMContentLoaded', injectSocialIcons);
-}
-
-// --- Service Cards â€” generated from JS data to reduce HTML size ---
-// CARDS_DATA[] is defined in data.js
-
-const BULLET_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="16" class="services-card__bullet-svg" aria-hidden="true"><use href="#bullet-icon" /></svg>';
-
-function buildCard({ color, sticker, title, services }) {
-    const items = services.map(s => '<li>' + BULLET_SVG + s + '</li>').join('');
-    return (
-        '<div class="card card-' + color + '">' +
-        '<div class="card-sticker sticker-' + sticker + '">' +
-        '<img src="assets/Card-Sticker SVG/sticker-' + sticker + '.svg" alt="" width="100%" loading="lazy" aria-hidden="true">' +
-        '</div>' +
-        '<h3 class="card-title">' + title + '</h3>' +
-        '<svg width="100%" height="10" class="card-divider-svg" aria-hidden="true"><use href="#card-divider" /></svg>' +
-        '<ul class="card-list">' + items + '</ul>' +
-        '</div>'
-    );
-}
-
-function injectCards() {
-    const wrapper = document.getElementById('cards-wrapper');
-    if (!wrapper) return;
-    wrapper.innerHTML = CARDS_DATA.map(buildCard).join('');
-    initCardAnimations(); // bind GSAP hover now that cards are in the DOM
-}
-
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    injectCards();
-} else {
-    document.addEventListener('DOMContentLoaded', injectCards);
-}
-
-
-// --- Footer Credits Pop-out Animation ---
-const creditsWrapper = document.querySelector('.footer-credits-wrapper');
-if (creditsWrapper) {
-    const creditsBox = creditsWrapper.querySelector('.credits-box');
-    const creditsTexts = creditsBox.querySelectorAll('.credits-label, .credits-name');
-
-    // Create a timeline for the credits animation
-    const creditsTl = gsap.timeline({
-        paused: true,
-        onReverseComplete: () => gsap.set(creditsBox, { visibility: 'hidden' })
-    });
-
-    creditsTl.fromTo(creditsBox,
-        {
-            scale: 0,
-            opacity: 0,
-            y: 50,
-            x: 50,
-            transformOrigin: "bottom right"
-        },
-        {
-            scale: 1,
-            opacity: 1,
-            y: 0,
-            x: 0,
-            duration: 0.5,
-            ease: "back.out(1.5)"
-        }
-    ).fromTo(creditsTexts,
-        { y: "100%" },
-        {
-            y: "0%",
-            duration: 0.4,
-            stagger: 0.05,
-            ease: "power2.out"
-        },
-        "-=0.3"
-    );
-
-    creditsWrapper.addEventListener('mouseenter', () => {
-        gsap.set(creditsBox, { visibility: 'visible' });
-        creditsTl.play();
-    });
-
-    creditsWrapper.addEventListener('mouseleave', () => {
-        creditsTl.reverse();
-    });
-}
-
-
-// --- Custom Cursor Bubble Logic ---
-const cursorBubble = document.querySelector('.cursor-bubble');
-if (cursorBubble) {
-    const xTo = gsap.quickTo(cursorBubble, "x", { duration: 0.5, ease: "power3" });
-    const yTo = gsap.quickTo(cursorBubble, "y", { duration: 0.5, ease: "power3" });
-
-    let isHoveringClickable = false;
-
-    // Set initial custom state so it spawns tilted the very first time
-    gsap.set(cursorBubble, { rotation: -30 });
-
-    window.addEventListener("mousemove", (e) => {
-        // Offset bubble slightly from cursor tip
-        xTo(e.clientX + 13);
-        yTo(e.clientY - 43);
-    });
-
-    document.addEventListener("mouseover", (e) => {
-        // Target specific elements requested by the user
-        const targetSelector = '.footer-column h3, .footer-map-link span, .footer-email, .footer-whatsapp, .single-social, .logo-truus';
-        const found = e.target.closest(targetSelector);
-
-        if (found && !isHoveringClickable) {
-            isHoveringClickable = true;
-            if (found.matches('.logo-truus')) {
-                cursorBubble.textContent = "to home";
-            } else {
-                cursorBubble.textContent = "click";
-            }
-            // Explicitly kill any pending delayed animations for these properties ONLY (preserves x/y mouse tracking)
-            gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
-            // Pop out with delay, starting from a tilted angle (set during hide)
-            gsap.to(cursorBubble, { opacity: 1, scale: 1, rotation: 0, duration: 1.7, delay: 0.1, ease: "elastic.out(1, 0.4)" });
-        } else if (!found && isHoveringClickable) {
-            isHoveringClickable = false;
-            // Explicitly kill pending pop-outs
-            gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
-            // Hide and tilt it so next time it starts tilted
-            gsap.to(cursorBubble, { opacity: 1, scale: 0, rotation: -30, duration: 0.3, ease: "sine.inOut" });
-        }
-    });
-
-    document.addEventListener("mouseleave", () => {
-        if (isHoveringClickable) {
-            isHoveringClickable = false;
-            gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
-            gsap.to(cursorBubble, { opacity: 1, scale: 0, rotation: -30, duration: 0.3, ease: "sine.inOut" });
-        }
-    });
-}
-
-// ─── Logo Click Transition ──────────────────────────────────────────────────
-const logoTruusClickable = document.querySelector('.logo-truus');
-const transitionScribblePath = document.querySelector('.transition-scribble path');
-const transitionScribbleSvg = document.querySelector('.transition-scribble');
-
-if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
-    // Collect all colors from :root (except bg-color) for random selection
-    const transitionColors = [
-        'var(--color-green)',
-        'var(--color-lightblue)',
-        'var(--color-darkblue)',
-        'var(--color-lightgreen)',
-        'var(--color-orange)',
-        'var(--color-maroon)',
-        'var(--color-pink)'
-    ];
-
-    const runScribbleAnimation = (e) => {
-        if (e) e.preventDefault();
-
-        // Prevent multiple clicks while animating
-        if (gsap.isTweening(transitionScribblePath) || gsap.isTweening(transitionScribbleSvg) || document.body.classList.contains('is-transitioning')) return;
-
-        // Fetch settings from config object
-        const config = ANIMATION_CONFIG.transitionScribble;
-        const currentScale = config.scale;
-        const durIn = config.durationIn || 0.8;
-        const durOut = config.durationOut || 1.5;
-
-        // Apply scale globally on the SVG
-        gsap.set(transitionScribbleSvg, { scale: currentScale });
-
-        const pathLength = transitionScribblePath.getTotalLength();
-        const l = pathLength + 5; // tiny buffer
-
-        // Pick a random non-repeating color (simplified version of their getNonRepeatingRandomTheme)
-        const randomColor = transitionColors[Math.floor(Math.random() * transitionColors.length)];
-        transitionScribbleSvg.style.color = randomColor;
-
-        // Contrast: if the scribble is a light color, make logo black. Otherwise, white.
-        const lightColors = ['var(--color-lightblue)', 'var(--color-lightgreen)', 'var(--color-pink)'];
-        const logoColor = lightColors.includes(randomColor) ? '#000' : '#fff';
-
-        // Create transition logo if missing
-        let transitionLogo = document.querySelector('.transition-logo');
-        if (!transitionLogo) {
-            transitionLogo = document.createElement('div');
-            transitionLogo.className = 'transition-logo';
-            transitionLogo.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10000; pointer-events:none; opacity:0; display:flex; justify-content:center; align-items:center; transition: color 0.1s;';
-            const svgClone = document.querySelector('.logo-truus').cloneNode(true);
-            svgClone.style.width = '150px';
-            svgClone.style.height = 'auto';
-            transitionLogo.appendChild(svgClone);
-            document.body.appendChild(transitionLogo);
-        }
-
-        // Apply dynamic contrast logo color for the current scribble pass
-        transitionLogo.style.color = logoColor;
-
-        // Set initial states (equivalent to drawSVG: '0% 0%')
-        gsap.set(transitionScribblePath, {
-            strokeDasharray: l,
-            strokeDashoffset: l,
-            strokeWidth: config.strokeWidthStart,
-            opacity: 1
-        });
-        gsap.set(transitionScribbleSvg, { opacity: 1, x: 0, y: 0, rotation: 0 });
-        gsap.set(transitionLogo, { opacity: 0, scale: 1 });
-
-        // Hide cursor bubble and disable pointer events
-        document.body.classList.add('is-transitioning');
-        const cursorBubble = document.querySelector('.cursor-bubble');
-        if (cursorBubble) gsap.to(cursorBubble, { opacity: 0, duration: 0.2 });
-
-        let drawTl = gsap.timeline({
-            onComplete: () => {
-                document.body.classList.remove('is-transitioning');
-                gsap.set(transitionScribblePath, { strokeWidth: "0%" });
-                gsap.set(transitionLogo, { opacity: 0 });
-            }
-        });
-
-        // 1. Draw from A to B (equivalent to drawSVG: '0% 100%')
-        drawTl.to(transitionScribblePath, {
-            strokeDashoffset: 0,
-            duration: durIn,
-            ease: "power1.inOut"
-        }, 0);
-
-        drawTl.to(transitionScribblePath, {
-            strokeWidth: config.strokeWidthMax,
-            duration: durIn,
-            ease: "power2.inOut"
-        }, 0);
-
-        // Mask transition: scroll to top exactly when the screen is fully masked
-        drawTl.call(() => {
-            if (typeof lenis !== 'undefined') {
-                lenis.scrollTo(0, { immediate: true });
-            } else {
-                window.scrollTo(0, 0);
-            }
-        }, null, durIn);
-
-        // 2. Remove from A to B (equivalent to drawSVG: '100% 100%')
-        drawTl.to(transitionScribblePath, {
-            strokeDashoffset: -l,
-            duration: durOut,
-            ease: "power2.inOut"
-        }, durIn);
-
-        drawTl.to(transitionScribblePath, {
-            strokeWidth: config.strokeWidthStart,
-            duration: durOut,
-            ease: "power2.inOut"
-        }, durIn);
-
-        // 3. Logo Animation (AutoAlpha 1 at 0.4s, AutoAlpha 0 at 1.5s as per Truus logic)
-        // Ensure starting state
-        drawTl.set(transitionLogo, { autoAlpha: 0 }, 0);
-
-        drawTl.to(transitionLogo, {
-            autoAlpha: 1,
-            duration: durIn * 0.5,
-            ease: "power2.out",
-            onStart: () => {
-                // Apply continuous wiggle effect
-                gsap.to(transitionLogo.querySelector('svg'), {
-                    rotation: 5,
-                    duration: 0.15,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: "steps(1)",
-                    overwrite: "auto"
-                });
-            }
-        }, durIn * 0.5);
-
-        // Vanish exactly when the scribble "whip" passes it. Like a cloth wiping a table.
-        // Zero duration = no fade, no shrink, no move, no clip-path. Just a clean disappearance.
-        drawTl.set(transitionLogo, {
-            autoAlpha: 0,
-            onComplete: () => {
-                gsap.killTweensOf(transitionLogo.querySelector('svg'));
-                gsap.set(transitionLogo.querySelector('svg'), { rotation: 0 });
-            }
-        }, durIn + (durOut * 0.48));
-    };
-
-    // Attach to real logo
-    logoTruusClickable.addEventListener('click', runScribbleAnimation);
-
-    // Run the animation automatically on initial load or reload
-    window.addEventListener('load', () => {
-        // Add a tiny delay to ensure everything is visually ready before starting the "reveal"
-        setTimeout(() => {
-            runScribbleAnimation(null);
-        }, 100);
-    });
-}
