@@ -393,6 +393,7 @@ function initWiggle(element, intensity) {
 
 // Map each element to its WIGGLE_CONFIG key
 const WIGGLE_TARGETS = [
+    { selector: '.logo-truus', key: 'logoTruus' },
     { selector: '.footer-column:first-child h3', key: 'jobHeading' },
     { selector: '.footer-map-link span', key: 'googleMap' },
     { selector: '.footer-email', key: 'email' },
@@ -665,11 +666,16 @@ if (cursorBubble) {
 
     document.addEventListener("mouseover", (e) => {
         // Target specific elements requested by the user
-        const targetSelector = '.footer-column h3, .footer-map-link span, .footer-email, .footer-whatsapp, .single-social';
-        const found = !!e.target.closest(targetSelector);
+        const targetSelector = '.footer-column h3, .footer-map-link span, .footer-email, .footer-whatsapp, .single-social, .logo-truus';
+        const found = e.target.closest(targetSelector);
 
         if (found && !isHoveringClickable) {
             isHoveringClickable = true;
+            if (found.matches('.logo-truus')) {
+                cursorBubble.textContent = "to home";
+            } else {
+                cursorBubble.textContent = "click";
+            }
             // Explicitly kill any pending delayed animations for these properties ONLY (preserves x/y mouse tracking)
             gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
             // Pop out with delay, starting from a tilted angle (set during hide)
@@ -689,6 +695,68 @@ if (cursorBubble) {
             gsap.killTweensOf(cursorBubble, "opacity,scale,rotation");
             gsap.to(cursorBubble, { opacity: 1, scale: 0, rotation: -30, duration: 0.3, ease: "sine.inOut" });
         }
+    });
+}
+
+// ─── Logo Click Transition ──────────────────────────────────────────────────
+const logoTruusClickable = document.querySelector('.logo-truus');
+const transitionScribblePath = document.querySelector('.transition-scribble path');
+const transitionScribbleSvg = document.querySelector('.transition-scribble');
+
+if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
+    // Collect all colors from :root (except bg-color) for random selection
+    const transitionColors = [
+        'var(--color-green)',
+        'var(--color-lightblue)',
+        'var(--color-darkblue)',
+        'var(--color-lightgreen)',
+        'var(--color-orange)',
+        'var(--color-maroon)',
+        'var(--color-pink)'
+    ];
+
+    logoTruusClickable.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Prevent multiple clicks while animating
+        if (gsap.isTweening(transitionScribblePath) || gsap.isTweening(transitionScribbleSvg)) return;
+
+        const length = transitionScribblePath.getTotalLength();
+
+        // Pick a random color
+        const randomColor = transitionColors[Math.floor(Math.random() * transitionColors.length)];
+        transitionScribbleSvg.style.color = randomColor;
+
+        // Ensure starting state: set dasharray to length and offset to length to hide it initially
+        // Start with full screen thickness already
+        gsap.set(transitionScribblePath, {
+            strokeDasharray: length,
+            strokeDashoffset: length,
+            strokeWidth: "100%"
+        });
+
+        // Step 1: Draw the stroke from start to end (at full thickness)
+        gsap.to(transitionScribblePath, {
+            strokeDashoffset: 0,
+            duration: 1.5,
+            ease: "power3.inOut",
+            onComplete: () => {
+                // Scroll to top
+                if (typeof lenis !== 'undefined') {
+                    lenis.scrollTo(0, { immediate: true });
+                } else {
+                    window.scrollTo(0, 0);
+                }
+
+                // Return back to normal after covering the screen
+                gsap.to(transitionScribblePath, {
+                    strokeWidth: "0%",
+                    duration: 1.0,
+                    ease: "power2.inOut",
+                    delay: 0.1 // Brief pause before shrinking away
+                });
+            }
+        });
     });
 }
 
