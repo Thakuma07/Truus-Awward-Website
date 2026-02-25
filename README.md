@@ -21,6 +21,7 @@ This project is a high-fidelity clone of the Truus advertising agency website. I
 
 ## ✨ Key Features
 
+-   **Page Transition Mask Effect**: A custom GSAP-powered scribble animation that dynamically masks the entire screen to create a seamless page transition wipe. It includes smart logo contrast inversion (black/white) depending on the random scribble color, and an instantaneous "wipe" vanish effect that perfectly syncs with the scribble's trailing edge.
 -   **Dynamic Navigation System**: Context-aware navbar that automatically adapts its colour theme (light/dark) based on the current scroll section.
 -   **JS-Driven DOM**: Service cards, social icons, and marquee logos are all injected at runtime from clean JS data arrays — keeping `index.html` lean and maintainable.
 -   **Elastic Card Interactions**: Custom GSAP-powered hover effects on service cards, featuring horizontal repulsion, elastic scaling, and smooth clustering.
