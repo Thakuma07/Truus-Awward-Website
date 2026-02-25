@@ -1,4 +1,15 @@
-﻿// ─── Lenis Smooth Scroll ───────────────────────────────────────────────────
+﻿// ─── Animation Configurations ─────────────────────────────────────────────
+const ANIMATION_CONFIG = {
+    transitionScribble: {
+        strokeWidthStart: "8%",      // Reduced for smaller stroke (was 8%)
+        strokeWidthMax: "31%",       // Reduced for smaller stroke max coverage (was 31%)
+        scale: 0.7,
+        durationIn: 2.2,             // Fast 60fps draw phase
+        durationOut: 2.7             // Fast 60fps erase phase
+    }
+};
+
+// ─── Lenis Smooth Scroll ───────────────────────────────────────────────────
 const lenis = new Lenis({
     duration: 1.2,          // scroll duration multiplier
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo ease-out
@@ -715,32 +726,60 @@ if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
         'var(--color-pink)'
     ];
 
-    logoTruusClickable.addEventListener('click', (e) => {
-        e.preventDefault();
+    const runScribbleAnimation = (e) => {
+        if (e) e.preventDefault();
 
         // Prevent multiple clicks while animating
-        if (gsap.isTweening(transitionScribblePath) || gsap.isTweening(transitionScribbleSvg)) return;
+        if (gsap.isTweening(transitionScribblePath) || gsap.isTweening(transitionScribbleSvg) || document.body.classList.contains('is-transitioning')) return;
 
-        const length = transitionScribblePath.getTotalLength();
+        // Fetch settings from config object
+        const config = ANIMATION_CONFIG.transitionScribble;
+        const currentScale = config.scale;
+        const durIn = config.durationIn || 0.8;
+        const durOut = config.durationOut || 1.5;
 
-        // Pick a random color
+        // Apply scale globally on the SVG
+        gsap.set(transitionScribbleSvg, { scale: currentScale });
+
+        const pathLength = transitionScribblePath.getTotalLength();
+        const l = pathLength + 5; // tiny buffer
+
+        // Pick a random non-repeating color (simplified version of their getNonRepeatingRandomTheme)
         const randomColor = transitionColors[Math.floor(Math.random() * transitionColors.length)];
         transitionScribbleSvg.style.color = randomColor;
 
-        // Ensure starting state: set dasharray to length and offset to length to hide it initially
-        // Start with full screen thickness already
-        gsap.set(transitionScribblePath, {
-            strokeDasharray: length,
-            strokeDashoffset: length,
-            strokeWidth: "100%"
-        });
+        // Create transition logo if missing
+        let transitionLogo = document.querySelector('.transition-logo');
+        if (!transitionLogo) {
+            transitionLogo = document.createElement('div');
+            transitionLogo.className = 'transition-logo';
+            transitionLogo.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10000; pointer-events:none; opacity:0; color:#fff; display:flex; justify-content:center; align-items:center;';
+            const svgClone = document.querySelector('.logo-truus').cloneNode(true);
+            svgClone.style.width = '240px';
+            svgClone.style.height = 'auto';
+            transitionLogo.appendChild(svgClone);
+            document.body.appendChild(transitionLogo);
+        }
 
-        // Step 1: Draw the stroke from start to end (at full thickness)
-        gsap.to(transitionScribblePath, {
-            strokeDashoffset: 0,
-            duration: 1.5,
-            ease: "power3.inOut",
+        // Set initial states (equivalent to drawSVG: '0% 0%')
+        gsap.set(transitionScribblePath, {
+            strokeDasharray: l,
+            strokeDashoffset: l,
+            strokeWidth: config.strokeWidthStart,
+            opacity: 1
+        });
+        gsap.set(transitionScribbleSvg, { opacity: 1, x: 0, y: 0, rotation: 0 });
+        gsap.set(transitionLogo, { opacity: 0, scale: 1 });
+
+        // Hide cursor bubble and disable pointer events
+        document.body.classList.add('is-transitioning');
+        const cursorBubble = document.querySelector('.cursor-bubble');
+        if (cursorBubble) gsap.to(cursorBubble, { opacity: 0, duration: 0.2 });
+
+        let drawTl = gsap.timeline({
             onComplete: () => {
+                document.body.classList.remove('is-transitioning');
+
                 // Scroll to top
                 if (typeof lenis !== 'undefined') {
                     lenis.scrollTo(0, { immediate: true });
@@ -748,16 +787,70 @@ if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
                     window.scrollTo(0, 0);
                 }
 
-                // Return back to normal after covering the screen
-                gsap.to(transitionScribblePath, {
-                    strokeWidth: "0%",
-                    duration: 1.0,
-                    ease: "power2.inOut",
-                    delay: 0.1 // Brief pause before shrinking away
-                });
+                gsap.set(transitionScribblePath, { strokeWidth: "0%" });
+                gsap.set(transitionLogo, { opacity: 0 });
             }
         });
-    });
+
+        // 1. Draw from A to B (equivalent to drawSVG: '0% 100%')
+        drawTl.to(transitionScribblePath, {
+            strokeDashoffset: 0,
+            duration: durIn,
+            ease: "power1.inOut"
+        }, 0);
+
+        drawTl.to(transitionScribblePath, {
+            strokeWidth: config.strokeWidthMax,
+            duration: durIn,
+            ease: "power2.inOut"
+        }, 0);
+
+        // 2. Remove from A to B (equivalent to drawSVG: '100% 100%')
+        drawTl.to(transitionScribblePath, {
+            strokeDashoffset: -l,
+            duration: durOut,
+            ease: "power2.inOut"
+        }, durIn);
+
+        drawTl.to(transitionScribblePath, {
+            strokeWidth: config.strokeWidthStart,
+            duration: durOut,
+            ease: "power2.inOut"
+        }, durIn);
+
+        // 3. Logo Animation (AutoAlpha 1 at 0.4s, AutoAlpha 0 at 1.5s as per Truus logic)
+        // Ensure starting state
+        drawTl.set(transitionLogo, { autoAlpha: 0 }, 0);
+
+        drawTl.to(transitionLogo, {
+            autoAlpha: 1,
+            duration: durIn * 0.5,
+            ease: "power2.out",
+            onStart: () => {
+                // Apply continuous wiggle effect
+                gsap.to(transitionLogo.querySelector('svg'), {
+                    rotation: 5,
+                    duration: 0.15,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "steps(1)",
+                    overwrite: "auto"
+                });
+            }
+        }, durIn * 0.5);
+
+        // Fade out logo as scribble is removed
+        drawTl.to(transitionLogo, {
+            autoAlpha: 0,
+            duration: durOut * 0.5,
+            ease: "power2.inOut",
+            onComplete: () => {
+                gsap.killTweensOf(transitionLogo.querySelector('svg'));
+                gsap.set(transitionLogo.querySelector('svg'), { rotation: 0 });
+            }
+        }, durIn + (durOut * 0.4));
+    };
+
+    // Attach to real logo
+    logoTruusClickable.addEventListener('click', runScribbleAnimation);
 }
-
-
