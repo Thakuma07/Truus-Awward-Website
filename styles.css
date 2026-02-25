@@ -1335,3 +1335,25 @@ body::-webkit-scrollbar {
     z-index: 10000;
     white-space: nowrap;
 }
+
+.transition-scribble {
+    position: fixed;
+    top: -50vh;
+    left: -50vw;
+    width: 200vw;
+    height: 200vh;
+    z-index: 9999;
+    pointer-events: none;
+    color: var(--color-darkblue);
+}
+
+/* Transition States */
+body.is-transitioning {
+    pointer-events: none !important;
+}
+
+body.is-transitioning .cursor-bubble {
+    opacity: 0 !important;
+    transform: scale(0) !important;
+    display: none !important;
+}

@@ -81,6 +81,7 @@ const CARDS_DATA = [
 // Edit the numbers below to control the hover wiggle on each element.
 // Higher number = more rotation (degrees). Set to 0 to disable.
 const WIGGLE_CONFIG = {
+    logoTruus: 4,
     socials: 5,  // LinkedIn / Instagram / TikTok icons
     jobHeading: 1,  // "not hiring right now" heading
     googleMap: 1,  // Google Maps link text
