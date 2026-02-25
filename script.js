@@ -779,14 +779,6 @@ if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
         let drawTl = gsap.timeline({
             onComplete: () => {
                 document.body.classList.remove('is-transitioning');
-
-                // Scroll to top
-                if (typeof lenis !== 'undefined') {
-                    lenis.scrollTo(0, { immediate: true });
-                } else {
-                    window.scrollTo(0, 0);
-                }
-
                 gsap.set(transitionScribblePath, { strokeWidth: "0%" });
                 gsap.set(transitionLogo, { opacity: 0 });
             }
@@ -804,6 +796,15 @@ if (logoTruusClickable && transitionScribblePath && transitionScribbleSvg) {
             duration: durIn,
             ease: "power2.inOut"
         }, 0);
+
+        // Mask transition: scroll to top exactly when the screen is fully masked
+        drawTl.call(() => {
+            if (typeof lenis !== 'undefined') {
+                lenis.scrollTo(0, { immediate: true });
+            } else {
+                window.scrollTo(0, 0);
+            }
+        }, null, durIn);
 
         // 2. Remove from A to B (equivalent to drawSVG: '100% 100%')
         drawTl.to(transitionScribblePath, {
