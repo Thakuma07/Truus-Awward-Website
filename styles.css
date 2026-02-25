@@ -27,6 +27,24 @@
     box-sizing: border-box;
 }
 
+::selection {
+    background-color: #f0befa;
+    color: #000;
+}
+
+/* Prevent selection on non-text elements (like shapes, images, and SVGs) */
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 body {
     background-color: var(--bg-color);
     font-family: 'Epilogue', sans-serif;
